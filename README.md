@@ -4,7 +4,7 @@ Implementation of AspNetCore.Identity for [LiteDB](https://github.com/mbdavid/Li
 __LiteDB.Identity__ will allow quickly creates users login, registration, roles, claims and tokens functionalities for web application. 
 
 ## How to use it ?
-Please install latest version of LiteDB.Identity using NuGet: 
+Please install latest version of [LiteDB.Identity](https://www.nuget.org/packages/LiteDB.Identity/) using NuGet: 
 ```
 Install-Package LiteDB.Identity
 ```
