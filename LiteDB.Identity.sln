@@ -1,0 +1,48 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30011.22
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sample", "sample", "{9711AC53-7CCB-4A2F-9519-2BC4CC18A0CC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{95271FEC-59FF-40C0-91AD-BC6FE65600D3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{7D979CDA-87AF-40AB-997D-2B11E3B74C4A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiteDB.Identity.Tests", "tests\LiteDB.Identity.Tests\LiteDB.Identity.Tests.csproj", "{36062F48-CF60-4D30-9553-134A9D27743B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiteDB.Identity", "src\LiteDB.Identity\LiteDB.Identity.csproj", "{499CFDD9-D3DA-4936-8683-D9E8F642A877}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiteDB.Identity.Sample", "sample\LiteDB.Identity.Sample\LiteDB.Identity.Sample.csproj", "{57831C9B-3F19-4094-995E-5AE541C73AAD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{36062F48-CF60-4D30-9553-134A9D27743B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36062F48-CF60-4D30-9553-134A9D27743B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36062F48-CF60-4D30-9553-134A9D27743B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36062F48-CF60-4D30-9553-134A9D27743B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{499CFDD9-D3DA-4936-8683-D9E8F642A877}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{499CFDD9-D3DA-4936-8683-D9E8F642A877}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{499CFDD9-D3DA-4936-8683-D9E8F642A877}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{499CFDD9-D3DA-4936-8683-D9E8F642A877}.Release|Any CPU.Build.0 = Release|Any CPU
+		{57831C9B-3F19-4094-995E-5AE541C73AAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{57831C9B-3F19-4094-995E-5AE541C73AAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{57831C9B-3F19-4094-995E-5AE541C73AAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{57831C9B-3F19-4094-995E-5AE541C73AAD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{36062F48-CF60-4D30-9553-134A9D27743B} = {7D979CDA-87AF-40AB-997D-2B11E3B74C4A}
+		{499CFDD9-D3DA-4936-8683-D9E8F642A877} = {95271FEC-59FF-40C0-91AD-BC6FE65600D3}
+		{57831C9B-3F19-4094-995E-5AE541C73AAD} = {9711AC53-7CCB-4A2F-9519-2BC4CC18A0CC}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {ECD763D2-436F-403F-A58F-8E37D76EEE16}
+	EndGlobalSection
+EndGlobal
