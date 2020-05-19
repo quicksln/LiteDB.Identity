@@ -29,7 +29,7 @@ Add default LiteDb.Identity implementation in ConfigureServices method:
 ```
 
 __NOTE :__ appsettings.json should contains connection string to your LiteDB file.
-For more implementation details please refer to sample [project]().
+For more implementation details please refer to sample [project](https://github.com/quicksln/LiteDB.Identity/tree/master/sample/LiteDB.Identity.Sample).
 
 ### Stores implementation
 
