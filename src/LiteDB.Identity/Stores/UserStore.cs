@@ -1,4 +1,5 @@
 ﻿using LiteDB;
+using LiteDB.Identity.Database;
 using LiteDB.Identity.Models;
 using Microsoft.AspNetCore.Identity;
 using System;
@@ -40,14 +41,14 @@ namespace LiteDB.Identity.Stores
         private readonly ILiteCollection<TUserLogin> userLogins;
         private readonly ILiteCollection<TUserToken> userTokens;
 
-        public UserStore(LiteDB.Identity.Database.ILiteDbIdentityContext dbContext)
+        public UserStore(ILiteDbIdentityContext dbContext)
         {
-            users = dbContext.LiteDatabase.GetCollection<TUser>(nameof(LiteDbUser));
-            userRoles = dbContext.LiteDatabase.GetCollection<TUserRole>(nameof(LiteDbUserRole));
-            userClaims = dbContext.LiteDatabase.GetCollection<TUserClaim>(nameof(LiteDbUserClaim));
-            roles = dbContext.LiteDatabase.GetCollection<TRole>(nameof(LiteDbRole));
-            userLogins = dbContext.LiteDatabase.GetCollection<TUserLogin>(nameof(LiteDbUserLogin));
-            userTokens = dbContext.LiteDatabase.GetCollection<TUserToken>(nameof(LiteDbUserToken));
+            users = dbContext.LiteDatabase.GetCollection<TUser>(typeof(TUser).Name);
+            userRoles = dbContext.LiteDatabase.GetCollection<TUserRole>(typeof(TUserRole).Name);
+            userClaims = dbContext.LiteDatabase.GetCollection<TUserClaim>(typeof(TUserClaim).Name);
+            roles = dbContext.LiteDatabase.GetCollection<TRole>(typeof(TRole).Name);
+            userLogins = dbContext.LiteDatabase.GetCollection<TUserLogin>(typeof(TUserLogin).Name);
+            userTokens = dbContext.LiteDatabase.GetCollection<TUserToken>(typeof(TUserToken).Name);
         }
         public IQueryable<TUser> Users => users.FindAll().ToList().AsQueryable();
 
@@ -743,7 +744,7 @@ namespace LiteDB.Identity.Stores
 
             if (string.IsNullOrEmpty(loginProvider) || string.IsNullOrEmpty(providerKey))
             {
-                throw new ArgumentNullException("Login provider argumment missing");
+                throw new ArgumentNullException("Login provider argument missing");
             }
 
             var userLogin = userLogins.FindOne(u => u.UserId == user.Id && u.LoginProvider == loginProvider && u.ProviderKey == providerKey);
@@ -780,7 +781,7 @@ namespace LiteDB.Identity.Stores
             ThrowIfDisposed();
             if (string.IsNullOrEmpty(loginProvider) || string.IsNullOrEmpty(providerKey))
             {
-                throw new ArgumentNullException("Login provider argumment missing");
+                throw new ArgumentNullException("Login provider argument missing");
             }
 
             List<UserLoginInfo> result = new List<UserLoginInfo>();
@@ -806,7 +807,7 @@ namespace LiteDB.Identity.Stores
 
             if (string.IsNullOrEmpty(loginProvider) || string.IsNullOrEmpty(name))
             {
-                throw new ArgumentNullException("Token provider argumment missing");
+                throw new ArgumentNullException("Token provider argument missing");
             }
 
             var token = userTokens.Query().Where(t => t.UserId == user.Id && t.LoginProvider == loginProvider && t.Name == name).FirstOrDefault();
@@ -837,7 +838,7 @@ namespace LiteDB.Identity.Stores
 
             if (string.IsNullOrEmpty(loginProvider) || string.IsNullOrEmpty(name))
             {
-                throw new ArgumentNullException("Token provider argumment missing");
+                throw new ArgumentNullException("Token provider argument missing");
             }
 
             var token = userTokens.Query().Where(t => t.UserId == user.Id && t.LoginProvider == loginProvider && t.Name == name).FirstOrDefault();
@@ -859,7 +860,7 @@ namespace LiteDB.Identity.Stores
 
             if (string.IsNullOrEmpty(loginProvider) || string.IsNullOrEmpty(name))
             {
-                throw new ArgumentNullException("Token provider argumment missing");
+                throw new ArgumentNullException("Token provider argument missing");
             }
 
             var token = await Task.Run(() => { 

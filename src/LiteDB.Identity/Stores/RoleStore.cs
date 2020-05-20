@@ -1,4 +1,5 @@
-﻿using LiteDB.Identity.Models;
+﻿using LiteDB.Identity.Database;
+using LiteDB.Identity.Models;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
@@ -19,10 +20,10 @@ namespace LiteDB.Identity.Stores
         private readonly ILiteCollection<TRole> roles;
         private readonly ILiteCollection<TRoleClaim> roleClaim;
 
-        public RoleStore(LiteDB.Identity.Database.ILiteDbIdentityContext dbContext) 
+        public RoleStore(ILiteDbIdentityContext dbContext) 
         {
-            this.roles = dbContext.LiteDatabase.GetCollection<TRole>(nameof(TRole));
-            this.roleClaim = dbContext.LiteDatabase.GetCollection<TRoleClaim>(nameof(TRoleClaim));
+            this.roles = dbContext.LiteDatabase.GetCollection<TRole>(typeof(TRole).Name);
+            this.roleClaim = dbContext.LiteDatabase.GetCollection<TRoleClaim>(typeof(TRole).Name);
         }
 
         public IQueryable<TRole> Roles => roles.FindAll().AsQueryable();
@@ -83,7 +84,8 @@ namespace LiteDB.Identity.Stores
 
             var result = await Task.Run(() =>
             {
-                return roles.FindOne(r=> r.Name.Equals(normalizedRoleName, StringComparison.InvariantCultureIgnoreCase));
+                return roles.FindOne(r=> r.NormalizedName.Equals(normalizedRoleName, StringComparison.InvariantCultureIgnoreCase) ||
+                    r.Name.Equals(normalizedRoleName, StringComparison.InvariantCultureIgnoreCase));
             }, cancellationToken);
 
             return result;
@@ -130,8 +132,7 @@ namespace LiteDB.Identity.Stores
             {
                 throw new ArgumentNullException(nameof(role));
             }
-            role.NormalizedName = normalizedName;
-            roles.Update(role);
+            role.NormalizedName = normalizedName.ToUpper();
 
             return Task.CompletedTask;
         }
