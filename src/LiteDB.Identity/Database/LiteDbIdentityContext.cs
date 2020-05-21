@@ -4,8 +4,6 @@ namespace LiteDB.Identity.Database
 {
     public class LiteDbIdentityContext : ILiteDbIdentityContext, IDisposable
     {
-        private const string connectionStringName = "LiteDbIdentity";
-
         private readonly LiteDatabase liteDatabase;
         public LiteDbIdentityContext(string connectionStringName)
         {
