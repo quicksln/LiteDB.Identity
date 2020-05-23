@@ -9,11 +9,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{95271FEC-59F
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{7D979CDA-87AF-40AB-997D-2B11E3B74C4A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiteDB.Identity.Tests", "tests\LiteDB.Identity.Tests\LiteDB.Identity.Tests.csproj", "{36062F48-CF60-4D30-9553-134A9D27743B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LiteDB.Identity.Tests", "tests\LiteDB.Identity.Tests\LiteDB.Identity.Tests.csproj", "{36062F48-CF60-4D30-9553-134A9D27743B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiteDB.Identity", "src\LiteDB.Identity\LiteDB.Identity.csproj", "{499CFDD9-D3DA-4936-8683-D9E8F642A877}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LiteDB.Identity", "src\LiteDB.Identity\LiteDB.Identity.csproj", "{499CFDD9-D3DA-4936-8683-D9E8F642A877}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiteDB.Identity.Sample", "sample\LiteDB.Identity.Sample\LiteDB.Identity.Sample.csproj", "{57831C9B-3F19-4094-995E-5AE541C73AAD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LiteDB.Identity.Sample", "sample\LiteDB.Identity.Sample\LiteDB.Identity.Sample.csproj", "{57831C9B-3F19-4094-995E-5AE541C73AAD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
