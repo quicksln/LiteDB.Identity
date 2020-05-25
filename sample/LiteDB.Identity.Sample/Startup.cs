@@ -25,6 +25,7 @@ namespace LiteDB.Identity.Sample
 
             string connectionString = Configuration.GetConnectionString("IdentityLiteDB");
             services.AddLiteDBIdentity(connectionString).AddDefaultTokenProviders().AddDefaultUI();
+            //services.AddLiteDBIdentity(options => this.Configuration.Bind("LiteDbIdentityOptions", options)).AddDefaultTokenProviders().AddDefaultUI();
 
             services.AddControllersWithViews();
             services.AddRazorPages();
