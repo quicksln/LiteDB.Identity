@@ -3,6 +3,7 @@ using LiteDB.Identity.Models;
 using LiteDB.Identity.Tests.Mocks;
 using Microsoft.AspNetCore.Identity;
 using System;
+using System.Security.Claims;
 using Xunit;
 
 namespace LiteDB.Identity.Tests.Stores
@@ -74,7 +75,7 @@ namespace LiteDB.Identity.Tests.Stores
         }
 
         [Fact()]
-        public void GetRoleIdAsync()
+        public void GetRoleIdAsyncTest()
         {
             var manager = services.GetRoleManager();
             LiteDbRole newRole = SetUpRole(manager);
@@ -86,7 +87,7 @@ namespace LiteDB.Identity.Tests.Stores
         }
 
         [Fact()]
-        public void GetRoleNameAsync()
+        public void GetRoleNameAsyncTest()
         {
             var manager = services.GetRoleManager();
             LiteDbRole newRole = SetUpRole(manager);
@@ -98,7 +99,7 @@ namespace LiteDB.Identity.Tests.Stores
         }
 
         [Fact()]
-        public void SetRoleNameAsync()
+        public void SetRoleNameAsyncTest()
         {
             var manager = services.GetRoleManager();
             LiteDbRole newRole = SetUpRole(manager);
@@ -113,7 +114,7 @@ namespace LiteDB.Identity.Tests.Stores
         }
 
         [Fact()]
-        public void UpdateAsync()
+        public void UpdateAsyncTest()
         {
             var manager = services.GetRoleManager();
             LiteDbRole newRole = SetUpRole(manager);
@@ -126,6 +127,37 @@ namespace LiteDB.Identity.Tests.Stores
             role.Should().NotBeNull();
             role.Should().Match<LiteDbRole>(u => u.Name == "NewRoleTestNameV2");
 
+        }
+
+        [Fact()]
+        public void AddClaimAsyncTest()
+        {
+            var manager = services.GetRoleManager();
+            LiteDbRole role = SetUpRole(manager);
+            var claim = new Claim("test", "test");
+
+            var result = manager.AddClaimAsync(role, claim).GetAwaiter().GetResult();
+            var claimsForRole = manager.GetClaimsAsync(role).GetAwaiter().GetResult();
+
+            result.Should().Be(IdentityResult.Success);
+            claimsForRole.Should().NotBeNull();
+            claimsForRole.Count.Should().Be(1);
+        }
+
+        [Fact()]
+        public void RemoveClaimAsyncTest()
+        {
+            var manager = services.GetRoleManager();
+            LiteDbRole role = SetUpRole(manager);
+            var claim = new Claim("test", "test");
+            manager.AddClaimAsync(role, claim).GetAwaiter().GetResult();
+
+            var result = manager.RemoveClaimAsync(role, claim).GetAwaiter().GetResult();
+            var claimsForRole = manager.GetClaimsAsync(role).GetAwaiter().GetResult();
+
+            result.Should().Be(IdentityResult.Success);
+            claimsForRole.Should().NotBeNull();
+            claimsForRole.Count.Should().Be(0);
         }
 
         [Fact]
@@ -141,6 +173,9 @@ namespace LiteDB.Identity.Tests.Stores
             manager.Invoking(m => m.GetRoleNameAsync(null)).Should().Throw<ArgumentNullException>();
             manager.Invoking(m => m.SetRoleNameAsync(null, null)).Should().Throw<ArgumentNullException>();
             manager.Invoking(m => m.UpdateAsync(null)).Should().Throw<ArgumentNullException>();
+            manager.Invoking(m => m.AddClaimAsync(null,null)).Should().Throw<ArgumentNullException>();
+            manager.Invoking(m => m.GetClaimsAsync(null)).Should().Throw<ArgumentNullException>();
+            manager.Invoking(m => m.RemoveClaimAsync(null, null)).Should().Throw<ArgumentNullException>();
         }
 
         [Fact]
@@ -157,6 +192,9 @@ namespace LiteDB.Identity.Tests.Stores
             manager.Invoking(m => m.GetRoleNameAsync(null)).Should().Throw<ObjectDisposedException>();
             manager.Invoking(m => m.SetRoleNameAsync(null,null)).Should().Throw<ObjectDisposedException>();
             manager.Invoking(m => m.UpdateAsync(null)).Should().Throw<ObjectDisposedException>();
+            manager.Invoking(m => m.AddClaimAsync(null, null)).Should().Throw<ObjectDisposedException>();
+            manager.Invoking(m => m.GetClaimsAsync(null)).Should().Throw<ObjectDisposedException>();
+            manager.Invoking(m => m.RemoveClaimAsync(null, null)).Should().Throw<ObjectDisposedException>();
         }
 
 

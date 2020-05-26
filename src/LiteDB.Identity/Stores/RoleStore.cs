@@ -23,7 +23,7 @@ namespace LiteDB.Identity.Stores
         public RoleStore(ILiteDbIdentityContext dbContext) 
         {
             this.roles = dbContext.LiteDatabase.GetCollection<TRole>(typeof(TRole).Name);
-            this.roleClaim = dbContext.LiteDatabase.GetCollection<TRoleClaim>(typeof(TRole).Name);
+            this.roleClaim = dbContext.LiteDatabase.GetCollection<TRoleClaim>(typeof(TRoleClaim).Name);
         }
 
         public IQueryable<TRole> Roles => roles.FindAll().AsQueryable();
@@ -176,8 +176,7 @@ namespace LiteDB.Identity.Stores
 
             var roleClaims = await Task.Run(() =>
             {
-                return roleClaim.Query().Where(c => c.RoleId == role.Id)
-                            .Select(c => new Claim(c.ClaimType, c.ClaimValue)).ToList();
+                return roleClaim.Find(c => c.RoleId == role.Id).Select(c => new Claim(c.ClaimType, c.ClaimValue)).ToList();
             }, cancellationToken);
 
             return roleClaims;
