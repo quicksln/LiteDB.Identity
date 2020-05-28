@@ -1,5 +1,4 @@
 ﻿using LiteDB.Identity.Models;
-using System;
 
 namespace LiteDB.Identity.Database
 {

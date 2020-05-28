@@ -1,18 +1,22 @@
-﻿using LiteDB.Identity.Database;
-using LiteDB.Identity.Models;
-using Microsoft.AspNetCore.Identity;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 
+using LiteDB.Identity.Database;
+using LiteDB.Identity.Models;
+
+using Microsoft.AspNetCore.Identity;
+
 namespace LiteDB.Identity.Stores
 {
-    public class RoleStore<TRole, TRoleClaim> : IQueryableRoleStore<TRole>, 
-                                                IRoleStore<TRole>, 
-                                                IRoleClaimStore<TRole>, 
+    using LiteDB.Identity.Extensions;
+
+    public class RoleStore<TRole, TRoleClaim> : IQueryableRoleStore<TRole>,
+                                                IRoleStore<TRole>,
+                                                IRoleClaimStore<TRole>,
                                                 IDisposable
         where TRole : LiteDbRole, new()
         where TRoleClaim : LiteDbRoleClaim, new()
@@ -20,7 +24,7 @@ namespace LiteDB.Identity.Stores
         private readonly ILiteCollection<TRole> roles;
         private readonly ILiteCollection<TRoleClaim> roleClaim;
 
-        public RoleStore(ILiteDbIdentityContext dbContext) 
+        public RoleStore(ILiteDbIdentityContext dbContext)
         {
             this.roles = dbContext.LiteDatabase.GetCollection<TRole>(typeof(TRole).Name);
             this.roleClaim = dbContext.LiteDatabase.GetCollection<TRoleClaim>(typeof(TRoleClaim).Name);
@@ -30,26 +34,22 @@ namespace LiteDB.Identity.Stores
 
         public async Task<IdentityResult> CreateAsync(TRole role, CancellationToken cancellationToken)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            ThrowIfDisposed();
-            if (role == null)
-            {
-                throw new ArgumentNullException(nameof(role));
-            }
+            ThrowIfDisposedOrCancellationRequested(cancellationToken);
+
+            role.ThrowArgumentNullExceptionIfNull(nameof(role));
 
             await Task.Run(() => { roles.Insert(role); }, cancellationToken);
 
             return IdentityResult.Success;
         }
 
+
+
         public async Task<IdentityResult> DeleteAsync(TRole role, CancellationToken cancellationToken)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            ThrowIfDisposed();
-            if (role == null)
-            {
-                throw new ArgumentNullException(nameof(role));
-            }
+            ThrowIfDisposedOrCancellationRequested(cancellationToken);
+
+            role.ThrowArgumentNullExceptionIfNull(nameof(role));
 
             await Task.Run(() => { roles.Delete(role.Id); }, cancellationToken);
 
@@ -58,12 +58,9 @@ namespace LiteDB.Identity.Stores
 
         public async Task<TRole> FindByIdAsync(string roleId, CancellationToken cancellationToken)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            ThrowIfDisposed();
-            if (roleId == null)
-            {
-                throw new ArgumentNullException(nameof(roleId));
-            }
+            ThrowIfDisposedOrCancellationRequested(cancellationToken);
+
+            roleId.ThrowArgumentNullExceptionIfNull(nameof(roleId));
 
             var result = await Task.Run(() =>
             {
@@ -75,16 +72,13 @@ namespace LiteDB.Identity.Stores
 
         public async Task<TRole> FindByNameAsync(string normalizedRoleName, CancellationToken cancellationToken)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            ThrowIfDisposed();
-            if (normalizedRoleName == null)
-            {
-                throw new ArgumentNullException(nameof(normalizedRoleName));
-            }
+            ThrowIfDisposedOrCancellationRequested(cancellationToken);
+
+            normalizedRoleName.ThrowArgumentNullExceptionIfNull(nameof(normalizedRoleName));
 
             var result = await Task.Run(() =>
             {
-                return roles.FindOne(r=> r.NormalizedName.Equals(normalizedRoleName, StringComparison.InvariantCultureIgnoreCase) ||
+                return roles.FindOne(r => r.NormalizedName.Equals(normalizedRoleName, StringComparison.InvariantCultureIgnoreCase) ||
                     r.Name.Equals(normalizedRoleName, StringComparison.InvariantCultureIgnoreCase));
             }, cancellationToken);
 
@@ -93,45 +87,37 @@ namespace LiteDB.Identity.Stores
 
         public Task<string> GetNormalizedRoleNameAsync(TRole role, CancellationToken cancellationToken)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            ThrowIfDisposed();
-            if (role == null)
-            {
-                throw new ArgumentNullException(nameof(role));
-            }
+            ThrowIfDisposedOrCancellationRequested(cancellationToken);
+
+            role.ThrowArgumentNullExceptionIfNull(nameof(role));
+
             return Task.FromResult(role.NormalizedName);
         }
 
         public Task<string> GetRoleIdAsync(TRole role, CancellationToken cancellationToken)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            ThrowIfDisposed();
-            if (role == null)
-            {
-                throw new ArgumentNullException(nameof(role));
-            }
+            ThrowIfDisposedOrCancellationRequested(cancellationToken);
+
+            role.ThrowArgumentNullExceptionIfNull(nameof(role));
+
             return Task.FromResult(role.Id == null ? null : role.Id.ToString());
         }
 
         public Task<string> GetRoleNameAsync(TRole role, CancellationToken cancellationToken)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            ThrowIfDisposed();
-            if (role == null)
-            {
-                throw new ArgumentNullException(nameof(role));
-            }
+            ThrowIfDisposedOrCancellationRequested(cancellationToken);
+
+            role.ThrowArgumentNullExceptionIfNull(nameof(role));
+
             return Task.FromResult(role.Name);
         }
 
         public Task SetNormalizedRoleNameAsync(TRole role, string normalizedName, CancellationToken cancellationToken)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            ThrowIfDisposed();
-            if (role == null)
-            {
-                throw new ArgumentNullException(nameof(role));
-            }
+            ThrowIfDisposedOrCancellationRequested(cancellationToken);
+
+            role.ThrowArgumentNullExceptionIfNull(nameof(role));
+
             role.NormalizedName = normalizedName.ToUpper();
 
             return Task.CompletedTask;
@@ -139,12 +125,10 @@ namespace LiteDB.Identity.Stores
 
         public Task SetRoleNameAsync(TRole role, string roleName, CancellationToken cancellationToken)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            ThrowIfDisposed();
-            if (role == null)
-            {
-                throw new ArgumentNullException(nameof(role));
-            }
+            ThrowIfDisposedOrCancellationRequested(cancellationToken);
+
+            role.ThrowArgumentNullExceptionIfNull(nameof(role));
+
             role.Name = roleName;
             roles.Update(role);
 
@@ -153,12 +137,9 @@ namespace LiteDB.Identity.Stores
 
         public Task<IdentityResult> UpdateAsync(TRole role, CancellationToken cancellationToken)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            ThrowIfDisposed();
-            if (role == null)
-            {
-                throw new ArgumentNullException(nameof(role));
-            }
+            ThrowIfDisposedOrCancellationRequested(cancellationToken);
+
+            role.ThrowArgumentNullExceptionIfNull(nameof(role));
 
             roles.Update(role);
 
@@ -167,17 +148,14 @@ namespace LiteDB.Identity.Stores
 
         public async Task<IList<Claim>> GetClaimsAsync(TRole role, CancellationToken cancellationToken = default)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            ThrowIfDisposed();
-            if (role == null)
-            {
-                throw new ArgumentNullException(nameof(role));
-            }
+            ThrowIfDisposedOrCancellationRequested(cancellationToken);
+
+            role.ThrowArgumentNullExceptionIfNull(nameof(role));
 
             var roleClaims = await Task.Run(() =>
-            {
-                return roleClaim.Find(c => c.RoleId == role.Id).Select(c => new Claim(c.ClaimType, c.ClaimValue)).ToList();
-            }, cancellationToken);
+                {
+                    return roleClaim.Find(c => c.RoleId == role.Id).Select(c => new Claim(c.ClaimType, c.ClaimValue)).ToList();
+                }, cancellationToken);
 
             return roleClaims;
         }
@@ -203,22 +181,16 @@ namespace LiteDB.Identity.Stores
 
         public Task RemoveClaimAsync(TRole role, Claim claim, CancellationToken cancellationToken = default)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            ThrowIfDisposed();
-            if (role == null)
-            {
-                throw new ArgumentNullException(nameof(role));
-            }
-            if (claim == null)
-            {
-                throw new ArgumentNullException(nameof(claim));
-            }
+            ThrowIfDisposedOrCancellationRequested(cancellationToken);
+
+            claim.ThrowArgumentNullExceptionIfNull(nameof(claim));
+            role.ThrowArgumentNullExceptionIfNull(nameof(role));
 
             var claimsToRemove = roleClaim.Query().Where(r => r.RoleId.Equals(role.Id) && r.ClaimValue == claim.Value && r.ClaimType == claim.Type).ToList();
-            
-            if(claimsToRemove.Any())
+
+            if (claimsToRemove.Any())
             {
-                foreach(var rc in claimsToRemove)
+                foreach (var rc in claimsToRemove)
                 {
                     roleClaim.Delete(rc.Id);
                 }
@@ -255,7 +227,7 @@ namespace LiteDB.Identity.Stores
 
             if (disposing)
             {
-     
+
             }
 
             disposed = true;
@@ -267,5 +239,11 @@ namespace LiteDB.Identity.Stores
         }
 
         #endregion
+
+        private void ThrowIfDisposedOrCancellationRequested(CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            ThrowIfDisposed();
+        }
     }
 }

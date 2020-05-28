@@ -1,12 +1,15 @@
-﻿using LiteDB.Identity.Models;
-using LiteDB.Identity.Stores;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using System;
-
-namespace LiteDB.Identity.Extensions
+﻿namespace LiteDB.Identity.Extensions
 {
+    using System;
+
+    using LiteDB.Identity.Database;
+    using LiteDB.Identity.Models;
+    using LiteDB.Identity.Stores;
+
+    using Microsoft.AspNetCore.Identity;
+    using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.DependencyInjection.Extensions;
+
     /// <summary>
     /// Contains extension methods for <see cref="IServiceCollection"/> to add identity LiteDB stores.
     /// </summary>
@@ -21,7 +24,8 @@ namespace LiteDB.Identity.Extensions
             {
                 throw new ArgumentNullException(nameof(connectionString));
             }
-            builder.AddScoped<LiteDB.Identity.Database.ILiteDbIdentityContext, LiteDB.Identity.Database.LiteDbIdentityContext>(c => new LiteDB.Identity.Database.LiteDbIdentityContext(connectionString));
+
+            builder.AddScoped<ILiteDbIdentityContext, LiteDbIdentityContext>(c => new LiteDbIdentityContext(connectionString));
 
             // Identity stores
             builder.TryAddScoped<IUserStore<LiteDbUser>, UserStore<LiteDbUser, LiteDbRole, LiteDbUserRole, LiteDbUserClaim, LiteDbUserLogin, LiteDbUserToken>>();
