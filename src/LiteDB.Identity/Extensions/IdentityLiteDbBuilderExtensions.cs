@@ -3,6 +3,7 @@ using LiteDB.Identity.Stores;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using LiteDB.Identity.Database;
 using System;
 
 namespace LiteDB.Identity.Extensions
@@ -24,13 +25,35 @@ namespace LiteDB.Identity.Extensions
             {
                 throw new ArgumentNullException(nameof(options.ConnectionString));
             }
-            builder.AddScoped<LiteDB.Identity.Database.ILiteDbIdentityContext, LiteDB.Identity.Database.LiteDbIdentityContext>(c => new LiteDB.Identity.Database.LiteDbIdentityContext(options.ConnectionString));
 
+            builder.AddScoped<ILiteDbIdentityContext, LiteDbIdentityContext>(c => new LiteDbIdentityContext(options.ConnectionString));
+
+            return ConfigureStors(builder);
+        }
+
+        /// <summary>
+        /// Adds LiteDB identity default configuration to IServiceCollection.
+        /// </summary>
+        public static IdentityBuilder AddLiteDBIdentity(this IServiceCollection builder, string connectionString)
+        {
+            if (string.IsNullOrEmpty(connectionString))
+            {
+                throw new ArgumentNullException(nameof(connectionString));
+            }
+
+            builder.AddScoped<ILiteDbIdentityContext, LiteDbIdentityContext>(c => new LiteDbIdentityContext(connectionString));
+
+            return ConfigureStors(builder);
+        }
+
+        private static IdentityBuilder ConfigureStors(IServiceCollection builder)
+        {
             // Identity stores
             builder.TryAddScoped<IUserStore<LiteDbUser>, UserStore<LiteDbUser, LiteDbRole, LiteDbUserRole, LiteDbUserClaim, LiteDbUserLogin, LiteDbUserToken>>();
             builder.TryAddScoped<IRoleStore<LiteDbRole>, RoleStore<LiteDbRole, LiteDbRoleClaim>>();
 
             var identityBuilder = builder.AddIdentity<LiteDbUser, LiteDbRole>();
+
             return identityBuilder;
         }
     }
