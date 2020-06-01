@@ -15,13 +15,16 @@ namespace LiteDB.Identity.Extensions
         /// <summary>
         /// Adds LiteDB identity default configuration to IServiceCollection.
         /// </summary>
-        public static IdentityBuilder AddLiteDBIdentity(this IServiceCollection builder, string connectionString)
+        public static IdentityBuilder AddLiteDBIdentity(this IServiceCollection builder, Action<LiteDbIdentityOptions> configuration)
         {
-            if (string.IsNullOrEmpty(connectionString))
+            var options = new LiteDbIdentityOptions();
+            configuration?.Invoke(options);
+
+            if (string.IsNullOrEmpty(options.ConnectionString))
             {
-                throw new ArgumentNullException(nameof(connectionString));
+                throw new ArgumentNullException(nameof(options.ConnectionString));
             }
-            builder.AddScoped<LiteDB.Identity.Database.ILiteDbIdentityContext, LiteDB.Identity.Database.LiteDbIdentityContext>(c => new LiteDB.Identity.Database.LiteDbIdentityContext(connectionString));
+            builder.AddScoped<LiteDB.Identity.Database.ILiteDbIdentityContext, LiteDB.Identity.Database.LiteDbIdentityContext>(c => new LiteDB.Identity.Database.LiteDbIdentityContext(options.ConnectionString));
 
             // Identity stores
             builder.TryAddScoped<IUserStore<LiteDbUser>, UserStore<LiteDbUser, LiteDbRole, LiteDbUserRole, LiteDbUserClaim, LiteDbUserLogin, LiteDbUserToken>>();
