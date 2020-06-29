@@ -6,6 +6,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace LiteDB.Identity.Tests.Mocks
 {
+    using LiteDB.Identity.Validators.Implementations;
+    using LiteDB.Identity.Validators.Interfaces;
+
     internal class ServicesBuilder : IServicesBuilder
     {
         private readonly IServiceCollection services;
@@ -21,6 +24,7 @@ namespace LiteDB.Identity.Tests.Mocks
 
             services.AddScoped<IUserStore<LiteDbUser>, UserStore<LiteDbUser, LiteDbRole, LiteDbUserRole, LiteDbUserClaim, LiteDbUserLogin, LiteDbUserToken>>();
             services.AddScoped<IRoleStore<LiteDbRole>, RoleStore<LiteDbRole, LiteDbRoleClaim>>();
+            services.AddSingleton<IValidator, Validator>();
 
             services.AddIdentity<LiteDbUser, LiteDbRole>();
         }
