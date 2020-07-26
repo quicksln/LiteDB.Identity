@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using LiteDB.Identity.Database;
+using LiteDB.Identity.Validators.Implementations;
+using LiteDB.Identity.Validators.Interfaces;
 using System;
 
 namespace LiteDB.Identity.Extensions
@@ -27,6 +29,7 @@ namespace LiteDB.Identity.Extensions
             }
 
             builder.AddScoped<ILiteDbIdentityContext, LiteDbIdentityContext>(c => new LiteDbIdentityContext(options.ConnectionString));
+            builder.AddSingleton<IValidator, Validator>();
 
             return ConfigureStors(builder);
         }
@@ -42,6 +45,7 @@ namespace LiteDB.Identity.Extensions
             }
 
             builder.AddScoped<ILiteDbIdentityContext, LiteDbIdentityContext>(c => new LiteDbIdentityContext(connectionString));
+            builder.AddSingleton<IValidator, Validator>();
 
             return ConfigureStors(builder);
         }
