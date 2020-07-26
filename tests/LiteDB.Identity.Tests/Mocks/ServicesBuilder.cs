@@ -1,14 +1,13 @@
 ﻿using LiteDB.Identity.Database;
 using LiteDB.Identity.Models;
 using LiteDB.Identity.Stores;
+using LiteDB.Identity.Validators.Implementations;
+using LiteDB.Identity.Validators.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace LiteDB.Identity.Tests.Mocks
 {
-    using LiteDB.Identity.Validators.Implementations;
-    using LiteDB.Identity.Validators.Interfaces;
-
     internal class ServicesBuilder : IServicesBuilder
     {
         private readonly IServiceCollection services;

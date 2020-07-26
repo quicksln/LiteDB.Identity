@@ -1,5 +1,6 @@
 ﻿using LiteDB.Identity.Database;
 using LiteDB.Identity.Models;
+using LiteDB.Identity.Validators.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
@@ -10,8 +11,6 @@ using System.Threading.Tasks;
 
 namespace LiteDB.Identity.Stores
 {
-    using LiteDB.Identity.Validators.Interfaces;
-
     public class RoleStore<TRole, TRoleClaim> : IQueryableRoleStore<TRole>, 
                                                 IRoleStore<TRole>, 
                                                 IRoleClaimStore<TRole>, 
@@ -22,13 +21,13 @@ namespace LiteDB.Identity.Stores
         private readonly ILiteCollection<TRole> roles;
         private readonly ILiteCollection<TRoleClaim> roleClaim;
 
-        private readonly IValidator _nullValidator;
+        private readonly IValidator nullValidator;
 
         public RoleStore(ILiteDbIdentityContext dbContext, IValidator validator) 
         {
             this.roles = dbContext.LiteDatabase.GetCollection<TRole>(typeof(TRole).Name);
             this.roleClaim = dbContext.LiteDatabase.GetCollection<TRoleClaim>(typeof(TRoleClaim).Name);
-            _nullValidator = validator;
+            this.nullValidator = validator;
         }
 
         public IQueryable<TRole> Roles => roles.FindAll().AsQueryable();
@@ -38,7 +37,7 @@ namespace LiteDB.Identity.Stores
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
 
-            _nullValidator.ValidateForNull(role);
+            nullValidator.ValidateForNull(role);
 
             await Task.Run(() => { roles.Insert(role); }, cancellationToken);
 
@@ -49,7 +48,7 @@ namespace LiteDB.Identity.Stores
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            _nullValidator.ValidateForNull(role);
+            nullValidator.ValidateForNull(role);
 
             await Task.Run(() => { roles.Delete(role.Id); }, cancellationToken);
 
@@ -60,7 +59,7 @@ namespace LiteDB.Identity.Stores
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            _nullValidator.ValidateForNull(roleId);
+            nullValidator.ValidateForNull(roleId);
 
             var result = await Task.Run(() =>
             {
@@ -74,7 +73,7 @@ namespace LiteDB.Identity.Stores
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed(); 
-            _nullValidator.ValidateForNull(normalizedRoleName);
+            nullValidator.ValidateForNull(normalizedRoleName);
 
             var result = await Task.Run(() =>
             {
@@ -89,7 +88,7 @@ namespace LiteDB.Identity.Stores
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            _nullValidator.ValidateForNull(role);
+            nullValidator.ValidateForNull(role);
             return Task.FromResult(role.NormalizedName);
         }
 
@@ -97,7 +96,7 @@ namespace LiteDB.Identity.Stores
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            _nullValidator.ValidateForNull(role);
+            nullValidator.ValidateForNull(role);
             return Task.FromResult(role.Id == null ? null : role.Id.ToString());
         }
 
@@ -105,7 +104,7 @@ namespace LiteDB.Identity.Stores
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            _nullValidator.ValidateForNull(role);
+            nullValidator.ValidateForNull(role);
             return Task.FromResult(role.Name);
         }
 
@@ -113,7 +112,7 @@ namespace LiteDB.Identity.Stores
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            _nullValidator.ValidateForNull(role);
+            nullValidator.ValidateForNull(role);
             role.NormalizedName = normalizedName.ToUpper();
 
             return Task.CompletedTask;
@@ -123,7 +122,7 @@ namespace LiteDB.Identity.Stores
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            _nullValidator.ValidateForNull(role);
+            nullValidator.ValidateForNull(role);
             role.Name = roleName;
             roles.Update(role);
 
@@ -134,7 +133,7 @@ namespace LiteDB.Identity.Stores
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            _nullValidator.ValidateForNull(role);
+            nullValidator.ValidateForNull(role);
 
             roles.Update(role);
 
@@ -145,7 +144,7 @@ namespace LiteDB.Identity.Stores
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            _nullValidator.ValidateForNull(role);
+            nullValidator.ValidateForNull(role);
 
             var roleClaims = await Task.Run(() =>
             {
@@ -159,8 +158,8 @@ namespace LiteDB.Identity.Stores
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            _nullValidator.ValidateForNull(role);
-            _nullValidator.ValidateForNull(claim);
+            nullValidator.ValidateForNull(role);
+            nullValidator.ValidateForNull(claim);
 
             var newRoleClaim = new TRoleClaim { RoleId = role.Id, ClaimType = claim.Type, ClaimValue = claim.Value };
             roleClaim.Insert(newRoleClaim);
@@ -172,8 +171,8 @@ namespace LiteDB.Identity.Stores
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            _nullValidator.ValidateForNull(role);
-            _nullValidator.ValidateForNull(claim);
+            nullValidator.ValidateForNull(role);
+            nullValidator.ValidateForNull(claim);
 
             var claimsToRemove = roleClaim.Query().Where(r => r.RoleId.Equals(role.Id) && r.ClaimValue == claim.Value && r.ClaimType == claim.Type).ToList();
             

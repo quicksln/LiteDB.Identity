@@ -1,6 +1,6 @@
-﻿using LiteDB;
-using LiteDB.Identity.Database;
+﻿using LiteDB.Identity.Database;
 using LiteDB.Identity.Models;
+using LiteDB.Identity.Validators.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
@@ -11,8 +11,6 @@ using System.Threading.Tasks;
 
 namespace LiteDB.Identity.Stores
 {
-    using LiteDB.Identity.Validators.Interfaces;
-
     public class UserStore<TUser, TRole, TUserRole, TUserClaim, TUserLogin, TUserToken> : 
                                     IUserLoginStore<TUser>, 
                                     IUserStore<TUser>,
@@ -43,9 +41,9 @@ namespace LiteDB.Identity.Stores
         private readonly ILiteCollection<TUserLogin> userLogins;
         private readonly ILiteCollection<TUserToken> userTokens;
 
-        private readonly IValidator _nullValidator;
+        private readonly IValidator nullValidator;
 
-        public UserStore(ILiteDbIdentityContext dbContext, IValidator nullValidator)
+        public UserStore(ILiteDbIdentityContext dbContext, IValidator validator)
         {
             users = dbContext.LiteDatabase.GetCollection<TUser>(typeof(TUser).Name);
             userRoles = dbContext.LiteDatabase.GetCollection<TUserRole>(typeof(TUserRole).Name);
@@ -54,7 +52,7 @@ namespace LiteDB.Identity.Stores
             userLogins = dbContext.LiteDatabase.GetCollection<TUserLogin>(typeof(TUserLogin).Name);
             userTokens = dbContext.LiteDatabase.GetCollection<TUserToken>(typeof(TUserToken).Name);
 
-            _nullValidator = nullValidator;
+            nullValidator = validator;
         }
         public IQueryable<TUser> Users => users.FindAll().ToList().AsQueryable();
 
@@ -63,8 +61,8 @@ namespace LiteDB.Identity.Stores
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
 
-            _nullValidator.ValidateForNull(user, nameof(user));
-            _nullValidator.ValidateForNull(claims, nameof(claims));
+            nullValidator.ValidateForNull(user, nameof(user));
+            nullValidator.ValidateForNull(claims, nameof(claims));
 
             foreach (var claim in claims)
             {
@@ -80,8 +78,8 @@ namespace LiteDB.Identity.Stores
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
 
-            _nullValidator.ValidateForNull(user, nameof(user));
-            _nullValidator.ValidateForNull(normalizedRoleName, nameof(normalizedRoleName));
+            nullValidator.ValidateForNull(user, nameof(user));
+            nullValidator.ValidateForNull(normalizedRoleName, nameof(normalizedRoleName));
             var role = roles.FindOne(r => r.NormalizedName == normalizedRoleName);
             
             if (role == null)
@@ -99,7 +97,7 @@ namespace LiteDB.Identity.Stores
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            _nullValidator.ValidateForNull(user, nameof(user));
+            nullValidator.ValidateForNull(user, nameof(user));
 
             await Task.Run(() => { users.Insert(user); }, cancellationToken);
 
@@ -110,7 +108,7 @@ namespace LiteDB.Identity.Stores
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            _nullValidator.ValidateForNull(user, nameof(user));
+            nullValidator.ValidateForNull(user, nameof(user));
 
             await Task.Run(() => { users.Delete(user.Id); }, cancellationToken);
 
@@ -134,7 +132,7 @@ namespace LiteDB.Identity.Stores
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
 
-            _nullValidator.ValidateForNull(userId, nameof(userId));
+            nullValidator.ValidateForNull(userId, nameof(userId));
 
             var user = await Task.Run(() => {
                 return users.FindOne(u => u.Id == new ObjectId(userId));
@@ -148,7 +146,7 @@ namespace LiteDB.Identity.Stores
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
 
-            _nullValidator.ValidateForNullOrEmptyString(normalizedUserName, nameof(normalizedUserName));
+            nullValidator.ValidateForNullOrEmptyString(normalizedUserName, nameof(normalizedUserName));
 
             var user = await Task.Run(() => {
                 return users.FindOne(u => u.NormalizedUserName == normalizedUserName);
@@ -161,7 +159,7 @@ namespace LiteDB.Identity.Stores
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            _nullValidator.ValidateForNull(user, nameof(user));
+            nullValidator.ValidateForNull(user, nameof(user));
 
             return Task.FromResult(user.AccessFailedCount);
         }
@@ -170,7 +168,7 @@ namespace LiteDB.Identity.Stores
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            _nullValidator.ValidateForNull(user, nameof(user));
+            nullValidator.ValidateForNull(user, nameof(user));
 
             var claims = await Task.Run(() => 
             {
@@ -184,7 +182,7 @@ namespace LiteDB.Identity.Stores
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            _nullValidator.ValidateForNull(user, nameof(user));
+            nullValidator.ValidateForNull(user, nameof(user));
             return Task.FromResult(user.Email);
         }
 
@@ -192,7 +190,7 @@ namespace LiteDB.Identity.Stores
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            _nullValidator.ValidateForNull(user, nameof(user));
+            nullValidator.ValidateForNull(user, nameof(user));
             return Task.FromResult(user.EmailConfirmed);
         }
 
@@ -200,7 +198,7 @@ namespace LiteDB.Identity.Stores
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            _nullValidator.ValidateForNull(user, nameof(user));
+            nullValidator.ValidateForNull(user, nameof(user));
             return Task.FromResult(user.LockoutEnabled);
         }
 
@@ -208,7 +206,7 @@ namespace LiteDB.Identity.Stores
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            _nullValidator.ValidateForNull(user, nameof(user));
+            nullValidator.ValidateForNull(user, nameof(user));
             return Task.FromResult(user.LockoutEnd);
         }
 
@@ -216,7 +214,7 @@ namespace LiteDB.Identity.Stores
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            _nullValidator.ValidateForNull(user, nameof(user));
+            nullValidator.ValidateForNull(user, nameof(user));
             return Task.FromResult(user.NormalizedEmail);
         }
 
@@ -224,7 +222,7 @@ namespace LiteDB.Identity.Stores
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            _nullValidator.ValidateForNull(user, nameof(user));
+            nullValidator.ValidateForNull(user, nameof(user));
             return Task.FromResult(user.NormalizedUserName);
         }
 
@@ -232,7 +230,7 @@ namespace LiteDB.Identity.Stores
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            _nullValidator.ValidateForNull(user, nameof(user));
+            nullValidator.ValidateForNull(user, nameof(user));
             return Task.FromResult(user.PasswordHash);
         }
 
@@ -240,7 +238,7 @@ namespace LiteDB.Identity.Stores
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            _nullValidator.ValidateForNull(user, nameof(user));
+            nullValidator.ValidateForNull(user, nameof(user));
             return Task.FromResult(user.PhoneNumber);
         }
 
@@ -248,7 +246,7 @@ namespace LiteDB.Identity.Stores
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            _nullValidator.ValidateForNull(user, nameof(user));
+            nullValidator.ValidateForNull(user, nameof(user));
             return Task.FromResult(user.PhoneNumberConfirmed);
         }
 
@@ -256,7 +254,7 @@ namespace LiteDB.Identity.Stores
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            _nullValidator.ValidateForNull(user, nameof(user));
+            nullValidator.ValidateForNull(user, nameof(user));
 
             var roleList = await Task.Run(() =>
             {
@@ -273,7 +271,7 @@ namespace LiteDB.Identity.Stores
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            _nullValidator.ValidateForNull(user, nameof(user));
+            nullValidator.ValidateForNull(user, nameof(user));
             return Task.FromResult(user.SecurityStamp);
         }
 
@@ -281,7 +279,7 @@ namespace LiteDB.Identity.Stores
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            _nullValidator.ValidateForNull(user, nameof(user));
+            nullValidator.ValidateForNull(user, nameof(user));
             return Task.FromResult(user.TwoFactorEnabled);
         }
 
@@ -289,7 +287,7 @@ namespace LiteDB.Identity.Stores
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            _nullValidator.ValidateForNull(user, nameof(user));
+            nullValidator.ValidateForNull(user, nameof(user));
             return Task.FromResult(user.Id == null ? null : user.Id.ToString());
         }
 
@@ -297,7 +295,7 @@ namespace LiteDB.Identity.Stores
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            _nullValidator.ValidateForNull(user, nameof(user));
+            nullValidator.ValidateForNull(user, nameof(user));
             return Task.FromResult(user.UserName);
         }
 
@@ -305,7 +303,7 @@ namespace LiteDB.Identity.Stores
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            _nullValidator.ValidateForNull(claim, nameof(claim));
+            nullValidator.ValidateForNull(claim, nameof(claim));
 
             var userList = await Task.Run(() => 
             { 
@@ -322,7 +320,7 @@ namespace LiteDB.Identity.Stores
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            _nullValidator.ValidateForNullOrEmptyString(normalizedRoleName, nameof(normalizedRoleName));
+            nullValidator.ValidateForNullOrEmptyString(normalizedRoleName, nameof(normalizedRoleName));
 
             var role = roles.FindOne(r=>r.NormalizedName == normalizedRoleName);
 
@@ -343,7 +341,7 @@ namespace LiteDB.Identity.Stores
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            _nullValidator.ValidateForNull(user, nameof(user));
+            nullValidator.ValidateForNull(user, nameof(user));
             return Task.FromResult(user.PasswordHash != null);
         }
 
@@ -351,7 +349,7 @@ namespace LiteDB.Identity.Stores
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            _nullValidator.ValidateForNull(user, nameof(user));
+            nullValidator.ValidateForNull(user, nameof(user));
             user.AccessFailedCount++;
             return Task.FromResult(user.AccessFailedCount);
         }
@@ -361,8 +359,8 @@ namespace LiteDB.Identity.Stores
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
 
-            _nullValidator.ValidateForNull(user, nameof(user));
-            _nullValidator.ValidateForNullOrEmptyString(normalizedRoleName, nameof(normalizedRoleName));
+            nullValidator.ValidateForNull(user, nameof(user));
+            nullValidator.ValidateForNullOrEmptyString(normalizedRoleName, nameof(normalizedRoleName));
 
             var role = roles.FindOne(r => r.NormalizedName == normalizedRoleName);
             if (role == null) return Task.FromResult(false);
@@ -377,8 +375,8 @@ namespace LiteDB.Identity.Stores
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
 
-            _nullValidator.ValidateForNull(user, nameof(user));
-            _nullValidator.ValidateForNull(claims, nameof(claims));
+            nullValidator.ValidateForNull(user, nameof(user));
+            nullValidator.ValidateForNull(claims, nameof(claims));
             foreach (var claim in claims)
             {
                 var matchedClaims = userClaims.Query().Where(u => u.UserId.Equals(user.Id) && u.ClaimValue == claim.Value && u.ClaimType == claim.Type).ToList();
@@ -395,8 +393,8 @@ namespace LiteDB.Identity.Stores
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            _nullValidator.ValidateForNull(user, nameof(user));
-            _nullValidator.ValidateForNullOrEmptyString(normalizedRoleName, nameof(normalizedRoleName));
+            nullValidator.ValidateForNull(user, nameof(user));
+            nullValidator.ValidateForNullOrEmptyString(normalizedRoleName, nameof(normalizedRoleName));
             var role = roles.FindOne(r => r.NormalizedName == normalizedRoleName);
             if (role == null) return Task.CompletedTask;
 
@@ -413,9 +411,9 @@ namespace LiteDB.Identity.Stores
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            _nullValidator.ValidateForNull(user, nameof(user));
-            _nullValidator.ValidateForNull(claim, nameof(claim));
-            _nullValidator.ValidateForNull(newClaim, nameof(newClaim));
+            nullValidator.ValidateForNull(user, nameof(user));
+            nullValidator.ValidateForNull(claim, nameof(claim));
+            nullValidator.ValidateForNull(newClaim, nameof(newClaim));
 
             var claims = userClaims.Query().Where(u => u.UserId.Equals(user.Id) && u.ClaimValue == claim.Value && u.ClaimType == claim.Type).ToList();
             foreach (var c in claims)
@@ -432,7 +430,7 @@ namespace LiteDB.Identity.Stores
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            _nullValidator.ValidateForNull(user, nameof(user));
+            nullValidator.ValidateForNull(user, nameof(user));
             user.AccessFailedCount = 0;
             return Task.CompletedTask;
         }
@@ -441,7 +439,7 @@ namespace LiteDB.Identity.Stores
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            _nullValidator.ValidateForNull(user, nameof(user));
+            nullValidator.ValidateForNull(user, nameof(user));
             user.Email = email;
             return Task.CompletedTask;
         }
@@ -450,7 +448,7 @@ namespace LiteDB.Identity.Stores
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            _nullValidator.ValidateForNull(user, nameof(user));
+            nullValidator.ValidateForNull(user, nameof(user));
             user.EmailConfirmed = confirmed;
             return Task.CompletedTask;
         }
@@ -459,7 +457,7 @@ namespace LiteDB.Identity.Stores
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            _nullValidator.ValidateForNull(user, nameof(user));
+            nullValidator.ValidateForNull(user, nameof(user));
             user.LockoutEnabled = enabled;
             return Task.CompletedTask;
         }
@@ -468,7 +466,7 @@ namespace LiteDB.Identity.Stores
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            _nullValidator.ValidateForNull(user, nameof(user));
+            nullValidator.ValidateForNull(user, nameof(user));
             user.LockoutEnd = lockoutEnd;
             return Task.CompletedTask;
         }
@@ -477,7 +475,7 @@ namespace LiteDB.Identity.Stores
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            _nullValidator.ValidateForNull(user, nameof(user));
+            nullValidator.ValidateForNull(user, nameof(user));
             user.NormalizedEmail = normalizedEmail;
             return Task.CompletedTask;
         }
@@ -486,7 +484,7 @@ namespace LiteDB.Identity.Stores
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            _nullValidator.ValidateForNull(user, nameof(user));
+            nullValidator.ValidateForNull(user, nameof(user));
             user.NormalizedUserName = normalizedName;
             return Task.CompletedTask;
         }
@@ -495,7 +493,7 @@ namespace LiteDB.Identity.Stores
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            _nullValidator.ValidateForNull(user, nameof(user));
+            nullValidator.ValidateForNull(user, nameof(user));
             user.PasswordHash = passwordHash;
             return Task.CompletedTask;
         }
@@ -504,7 +502,7 @@ namespace LiteDB.Identity.Stores
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            _nullValidator.ValidateForNull(user, nameof(user));
+            nullValidator.ValidateForNull(user, nameof(user));
             user.PhoneNumber = phoneNumber;
             return Task.CompletedTask;
         }
@@ -513,7 +511,7 @@ namespace LiteDB.Identity.Stores
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            _nullValidator.ValidateForNull(user, nameof(user));
+            nullValidator.ValidateForNull(user, nameof(user));
             user.PhoneNumberConfirmed = confirmed;
             return Task.CompletedTask;
         }
@@ -522,8 +520,8 @@ namespace LiteDB.Identity.Stores
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            _nullValidator.ValidateForNull(user, nameof(user));
-            _nullValidator.ValidateForNull(stamp, nameof(stamp));
+            nullValidator.ValidateForNull(user, nameof(user));
+            nullValidator.ValidateForNull(stamp, nameof(stamp));
             user.SecurityStamp = stamp;
             return Task.CompletedTask;
         }
@@ -532,7 +530,7 @@ namespace LiteDB.Identity.Stores
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            _nullValidator.ValidateForNull(user, nameof(user));
+            nullValidator.ValidateForNull(user, nameof(user));
             user.TwoFactorEnabled = enabled;
             return Task.CompletedTask;
         }
@@ -541,7 +539,7 @@ namespace LiteDB.Identity.Stores
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            _nullValidator.ValidateForNull(user, nameof(user));
+            nullValidator.ValidateForNull(user, nameof(user));
             user.UserName = userName;
             return Task.CompletedTask;
         }
@@ -550,7 +548,7 @@ namespace LiteDB.Identity.Stores
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            _nullValidator.ValidateForNull(user, nameof(user));
+            nullValidator.ValidateForNull(user, nameof(user));
 
             users.Update(user);
 
@@ -562,9 +560,9 @@ namespace LiteDB.Identity.Stores
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            _nullValidator.ValidateForNull(user, nameof(user));
+            nullValidator.ValidateForNull(user, nameof(user));
 
-            _nullValidator.ValidateForNull(login, nameof(login));
+            nullValidator.ValidateForNull(login, nameof(login));
 
             var userLogin = new TUserLogin() {
                 UserId = user.Id,
@@ -582,10 +580,10 @@ namespace LiteDB.Identity.Stores
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            _nullValidator.ValidateForNull(user, nameof(user));
+            nullValidator.ValidateForNull(user, nameof(user));
 
-            _nullValidator.ValidateForNullOrEmptyString(loginProvider, null, "Login provider is missing");
-            _nullValidator.ValidateForNullOrEmptyString(providerKey, null, "Provider key is missing");
+            nullValidator.ValidateForNullOrEmptyString(loginProvider, null, "Login provider is missing");
+            nullValidator.ValidateForNullOrEmptyString(providerKey, null, "Provider key is missing");
 
             var userLogin = userLogins.FindOne(u => u.UserId == user.Id && u.LoginProvider == loginProvider && u.ProviderKey == providerKey);
             if(userLogin != null)
@@ -600,7 +598,7 @@ namespace LiteDB.Identity.Stores
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            _nullValidator.ValidateForNull(user, nameof(user));
+            nullValidator.ValidateForNull(user, nameof(user));
 
             List<UserLoginInfo> result = new List<UserLoginInfo>();
             var logins = userLogins.Query().Where(u => u.UserId == user.Id).ToList();
@@ -616,8 +614,8 @@ namespace LiteDB.Identity.Stores
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            _nullValidator.ValidateForNullOrEmptyString(loginProvider, null, "Login provider is missing");
-            _nullValidator.ValidateForNullOrEmptyString(providerKey, null, "Provider key is missing");
+            nullValidator.ValidateForNullOrEmptyString(loginProvider, null, "Login provider is missing");
+            nullValidator.ValidateForNullOrEmptyString(providerKey, null, "Provider key is missing");
 
             List<UserLoginInfo> result = new List<UserLoginInfo>();
             var login = userLogins.Query().Where(u => u.ProviderKey == providerKey && u.LoginProvider == loginProvider).FirstOrDefault();
@@ -635,10 +633,10 @@ namespace LiteDB.Identity.Stores
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            _nullValidator.ValidateForNull(user, nameof(user));
+            nullValidator.ValidateForNull(user, nameof(user));
 
-            _nullValidator.ValidateForNullOrEmptyString(loginProvider, null, "Login provider for token is missing");
-            _nullValidator.ValidateForNullOrEmptyString(name, null, "Name for token is missing");
+            nullValidator.ValidateForNullOrEmptyString(loginProvider, null, "Login provider for token is missing");
+            nullValidator.ValidateForNullOrEmptyString(name, null, "Name for token is missing");
 
             var token = userTokens.Query().Where(t => t.UserId == user.Id && t.LoginProvider == loginProvider && t.Name == name).FirstOrDefault();
             if(token== null) 
@@ -661,9 +659,9 @@ namespace LiteDB.Identity.Stores
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            _nullValidator.ValidateForNull(user, nameof(user));
-            _nullValidator.ValidateForNullOrEmptyString(loginProvider, null, "Login provider for token is missing");
-            _nullValidator.ValidateForNullOrEmptyString(name, null, "Name for token is missing");
+            nullValidator.ValidateForNull(user, nameof(user));
+            nullValidator.ValidateForNullOrEmptyString(loginProvider, null, "Login provider for token is missing");
+            nullValidator.ValidateForNullOrEmptyString(name, null, "Name for token is missing");
 
             var token = userTokens.Query().Where(t => t.UserId == user.Id && t.LoginProvider == loginProvider && t.Name == name).FirstOrDefault();
             if (token != null)
@@ -677,9 +675,9 @@ namespace LiteDB.Identity.Stores
         {
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
-            _nullValidator.ValidateForNull(user, nameof(user));
-            _nullValidator.ValidateForNullOrEmptyString(loginProvider, null, "Login provider for token is missing");
-            _nullValidator.ValidateForNullOrEmptyString(name, null, "Name for token is missing");
+            nullValidator.ValidateForNull(user, nameof(user));
+            nullValidator.ValidateForNullOrEmptyString(loginProvider, null, "Login provider for token is missing");
+            nullValidator.ValidateForNullOrEmptyString(name, null, "Name for token is missing");
 
             var token = await Task.Run(() => { 
                 return userTokens.Query().Where(t => t.UserId == user.Id && t.LoginProvider == loginProvider && t.Name == name).FirstOrDefault();
@@ -713,8 +711,8 @@ namespace LiteDB.Identity.Stores
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
 
-            _nullValidator.ValidateForNull(user, nameof(user));
-            _nullValidator.ValidateForNull(code, nameof(code));
+            nullValidator.ValidateForNull(user, nameof(user));
+            nullValidator.ValidateForNull(code, nameof(code));
 
             var codes = await GetTokenAsync(user, InternalLoginProvider, RecoveryCodeTokenName, cancellationToken) ?? string.Empty;
             var splitCodes = codes.Split(';');
@@ -732,7 +730,7 @@ namespace LiteDB.Identity.Stores
             cancellationToken.ThrowIfCancellationRequested();
             ThrowIfDisposed();
 
-            _nullValidator.ValidateForNull(user, nameof(user));
+            nullValidator.ValidateForNull(user, nameof(user));
             var codes = await GetTokenAsync(user, InternalLoginProvider, RecoveryCodeTokenName, cancellationToken) ?? string.Empty;
             return codes.Length > 0 ? codes.Split(';').Length : 0;
         }
