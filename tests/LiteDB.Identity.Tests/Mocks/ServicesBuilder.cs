@@ -1,4 +1,5 @@
 ﻿using LiteDB.Identity.Database;
+using LiteDB.Identity.Extensions;
 using LiteDB.Identity.Models;
 using LiteDB.Identity.Stores;
 using Microsoft.AspNetCore.Identity;
@@ -9,6 +10,7 @@ namespace LiteDB.Identity.Tests.Mocks
     internal class ServicesBuilder : IServicesBuilder
     {
         private readonly IServiceCollection services;
+        private ServiceProvider provider;
         public ServicesBuilder()
         {
             services = new ServiceCollection();
@@ -17,22 +19,18 @@ namespace LiteDB.Identity.Tests.Mocks
         {
             services.AddHttpContextAccessor();
             services.AddLogging();
-            services.AddScoped<ILiteDbIdentityContext, LiteDbIdentityContextMock>();
-
-            services.AddScoped<IUserStore<LiteDbUser>, UserStore<LiteDbUser, LiteDbRole, LiteDbUserRole, LiteDbUserClaim, LiteDbUserLogin, LiteDbUserToken>>();
-            services.AddScoped<IRoleStore<LiteDbRole>, RoleStore<LiteDbRole, LiteDbRoleClaim>>();
-
-            services.AddIdentity<LiteDbUser, LiteDbRole>();
+            services.AddLiteDBIdentity("Filename=:memory:;");
+            provider = services.BuildServiceProvider();
         }
 
         public RoleManager<LiteDbRole> GetRoleManager()
         {
-            return services.BuildServiceProvider().GetService<RoleManager<LiteDbRole>>();
+            return provider.GetService<RoleManager<LiteDbRole>>();
         }
 
         public UserManager<LiteDbUser> GetUserManager()
         {
-            return services.BuildServiceProvider().GetService<UserManager<LiteDbUser>>();
+            return provider.GetService<UserManager<LiteDbUser>>();
         }
     }
 }

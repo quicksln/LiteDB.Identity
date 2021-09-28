@@ -3,6 +3,7 @@ using LiteDB.Identity.Models;
 using LiteDB.Identity.Tests.Mocks;
 using Microsoft.AspNetCore.Identity;
 using System;
+using System.Linq;
 using Xunit;
 
 namespace AspNetCore.Identity.LiteDB.Stores.Tests
@@ -14,7 +15,36 @@ namespace AspNetCore.Identity.LiteDB.Stores.Tests
             services = new ServicesBuilder();
             services.Build();
         }
-
+        
+        [Fact()]
+        public void CreateAsyncTestTwo()
+        {
+            //Arrange
+            var manager = services.GetUserManager();
+            LiteDbUser newUser = SetUpUser(manager);
+            LiteDbUser newUser2 = SetUpUser(services.GetUserManager(),"2","2@de.de");
+            //Act
+            var users = manager.Users.ToList();
+            //
+            users.Should().NotBeNull();
+            users.Count.Should().Be(2);
+            
+        }        
+        [Fact()]
+        public void TestQueryable()
+        {
+            //Arrange
+            var manager = services.GetUserManager();
+            LiteDbUser newUser = SetUpUser(manager);
+            LiteDbUser newUser2 = SetUpUser(manager,"2","2@de.de");
+            //Act
+            var users = manager.Users.ToList();
+            //
+            users.Should().NotBeNull();
+            users.Count.Should().Be(2);
+            
+        }
+        
         [Fact()]
         public void CreateAsyncTest()
         {
@@ -161,12 +191,12 @@ namespace AspNetCore.Identity.LiteDB.Stores.Tests
 
         #region Private methods
 
-        private LiteDbUser SetUpUser(UserManager<LiteDbUser> manager)
+        private LiteDbUser SetUpUser(UserManager<LiteDbUser> manager, string name = "Test",string email = "test@test.com")
         {
             var user = new LiteDbUser()
             {
-                UserName = "Test",
-                Email = "test@test.com",
+                UserName = name,
+                Email = email,
             };
 
             manager.CreateAsync(user).GetAwaiter().GetResult();

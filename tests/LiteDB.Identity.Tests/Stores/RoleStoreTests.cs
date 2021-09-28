@@ -3,6 +3,7 @@ using LiteDB.Identity.Models;
 using LiteDB.Identity.Tests.Mocks;
 using Microsoft.AspNetCore.Identity;
 using System;
+using System.Linq;
 using System.Security.Claims;
 using Xunit;
 
@@ -16,7 +17,39 @@ namespace LiteDB.Identity.Tests.Stores
             services = new ServicesBuilder();
             services.Build();
         }
+        
+        
+        [Fact()]
+        public void CreateAsyncTestTwo()
+        {
+            //Arrange
+            var manager = services.GetRoleManager();
+            LiteDbRole newRole = SetUpRole(manager);
+            
+            
+            LiteDbRole newRole2 = SetUpRole(services.GetRoleManager(),"2");
+            //Act
+            var roles = manager.Roles.ToList();
+            //
+            roles.Should().NotBeNull();
+            roles.Count.Should().Be(2);
+            
+        }
 
+        [Fact()]
+        public void TestQueryable()
+        {
+            //Arrange
+            var manager = services.GetRoleManager();
+            LiteDbRole newRole = SetUpRole(manager);
+            LiteDbRole newRole2 = SetUpRole(manager,"2");
+            //Act
+            var roles = manager.Roles.ToList();
+            //
+            roles.Should().NotBeNull();
+            roles.Count.Should().Be(2);
+            
+        }
 
         [Fact()]
         public void CreateAsyncTest()
@@ -200,11 +233,11 @@ namespace LiteDB.Identity.Tests.Stores
 
         #region Private methods
 
-        private LiteDbRole SetUpRole(RoleManager<LiteDbRole> manager)
+        private LiteDbRole SetUpRole(RoleManager<LiteDbRole> manager,string name = "TestRole" )
         {
             var role = new LiteDbRole()
             {
-                Name = "TestRole"
+                Name = name
             };
 
             manager.CreateAsync(role).GetAwaiter().GetResult();
