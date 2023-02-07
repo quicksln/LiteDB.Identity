@@ -8,13 +8,13 @@
     <PackageProjectUrl>https://github.com/quicksln/LiteDB.Identity</PackageProjectUrl>
     <RepositoryUrl>https://github.com/quicksln/LiteDB.Identity</RepositoryUrl>
     <PackageTags>aspnetcore, identity, membership, litedb</PackageTags>
-    <Authors>Piotr Stola</Authors>
+    <Authors>Piotr Stola (quicksln)</Authors>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Copyright>MIT</Copyright>
     <Title>LiteDB.Identity </Title>
-    <Version>1.0.6</Version>
-    <AssemblyVersion>1.0.6</AssemblyVersion>
-    <FileVersion>1.0.6</FileVersion>
+    <Version>1.0.7</Version>
+    <AssemblyVersion>1.0.7</AssemblyVersion>
+    <FileVersion>1.0.7</FileVersion>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
@@ -32,7 +32,7 @@
   <ItemGroup>
     <PackageReference Include="LiteDB" Version="5.0.15" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
-    <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="6.0.13" />
+    <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="7.0.2" />
   </ItemGroup>
 
 </Project>
