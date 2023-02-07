@@ -119,7 +119,7 @@ Following interfaces has been implemented on :
 ### Support
 
 If you have found my contributions to the projects helpful, consider buying me a coffee to fuel my efforts :)
-[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/quicksln){:target="_blank"}
+[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/quicksln){:target="_blank"}]
 
 ### References
 - LiteDB - [https://www.litedb.org/](https://www.litedb.org/)
