@@ -1,12 +1,14 @@
 using Microsoft.AspNetCore.Identity;
 using LiteDB.Identity.Extensions;
+using LiteDB.Identity.Models;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddLiteDBIdentity(connectionString).AddDefaultTokenProviders().AddDefaultUI();
+builder.Services.AddLiteDBIdentity(connectionString);
+builder.Services.AddDefaultIdentity<LiteDbUser>();
 
 builder.Services.AddControllersWithViews();
 

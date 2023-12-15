@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "LiteDB.Identity.Tests": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:51192;http://localhost:51193"
+    }
+  }
+}

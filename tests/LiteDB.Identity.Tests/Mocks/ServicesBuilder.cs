@@ -25,17 +25,17 @@ namespace LiteDB.Identity.Tests.Mocks
             services.AddScoped<IRoleStore<LiteDbRole>, RoleStore<LiteDbRole, LiteDbRoleClaim>>();
             services.AddSingleton<IValidator, Validator>();
 
-            services.AddIdentity<LiteDbUser, LiteDbRole>();
+            services.AddIdentityCore<LiteDbUser>().AddRoles<LiteDbRole>();
         }
 
         public RoleManager<LiteDbRole> GetRoleManager()
         {
-            return services.BuildServiceProvider().GetService<RoleManager<LiteDbRole>>();
+            return services.BuildServiceProvider().GetService<RoleManager<LiteDbRole>>()!;
         }
 
         public UserManager<LiteDbUser> GetUserManager()
         {
-            return services.BuildServiceProvider().GetService<UserManager<LiteDbUser>>();
+            return services.BuildServiceProvider().GetService<UserManager<LiteDbUser>>()!;
         }
     }
 }

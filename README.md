@@ -1,19 +1,30 @@
-## LiteDB.Identity
+﻿## LiteDB.Identity
 
-The implementation of ASP.NET Core Identity for the [LiteDB](https://github.com/mbdavid/LiteDB) database engine.
+🚀 Start a seamless authentication experience with __LiteDB.Identity__ 🚀
 
+The revolutionary implementation of ASP.NET Core Identity tailored for the [LiteDB](https://github.com/mbdavid/LiteDB) database engine.
 __LiteDB.Identity__ will provide quick creation of login, registration, roles, claims, and token functionality for web applications.
 
+💡This isn't just a tool - it's your passport to an efficient authentication experience. 💡
+
 __Latest versions supports:__ 
-* LiteDB 5.0.15
-* .NET 6 and .NET 7
+* LiteDB 5.0.17
+* .NET 8 
 * .NETSTANDARD 2.1
-* Microsoft.Extensions.Identity.Stores 6.0.13 and 7.0.2
+* Microsoft.Extensions.Identity.Core   8.0.0
+* Microsoft.Extensions.Identity.Stores 8.0.0
+### Support
+If you have found my contributions to the projects helpful, consider __[buying me a coffee](https://www.buymeacoffee.com/quicksln)__ to fuel my efforts :)
+<br/><a href="https://www.buymeacoffee.com/quicksln" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: 41px !important;width: 174px !important;box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;" ></a>
 
 ## How to use it ?
 Please install latest version of [LiteDB.Identity](https://www.nuget.org/packages/LiteDB.Identity/) using NuGet: 
 ```
 Install-Package LiteDB.Identity
+```
+__For ASP.NET Core 8:__
+```
+Install-Package LiteDB.Identity -Version 1.0.8
 ```
 __For ASP.NET Core 7:__
 ```
@@ -34,7 +45,51 @@ Next, in your Startup.cs file add reference to namespace:
 using LiteDB.Identity.Extensions;
 ```
 
-Add default LiteDb.Identity implementation in ConfigureServices method:
+Add default LiteDb.Identity implementation in Program.cs file:
+
+__For ASP.NET Core 8 :__
+```csharp
+using Microsoft.AspNetCore.Identity;
+using LiteDB.Identity.Extensions;
+using LiteDB.Identity.Models;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddLiteDBIdentity(connectionString);
+builder.Services.AddDefaultIdentity<LiteDbUser>();
+
+builder.Services.AddControllersWithViews();
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    //app.UseMigrationsEndPoint();
+}
+else
+{
+    app.UseExceptionHandler("/Home/Error");
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    app.UseHsts();
+}
+
+app.UseHttpsRedirection();
+app.UseStaticFiles();
+
+app.UseRouting();
+
+app.UseAuthorization();
+
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
+app.MapRazorPages();
+
+app.Run();
+```
 
 __For ASP.NET Core 6 and 7 :__
 ```csharp
@@ -116,11 +171,6 @@ Following interfaces has been implemented on :
     - ASP.NET Core WebPages,
 - Quick implementation of Authentication and Authorization mechanism for WebAPIs.
 
-### Support
-
-If you have found my contributions to the projects helpful, consider buying me a coffee to fuel my efforts :)
-<br/><a href="https://www.buymeacoffee.com/quicksln" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: 41px !important;width: 174px !important;box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;" ></a>
-
 ### References
 - LiteDB - [https://www.litedb.org/](https://www.litedb.org/)
 - LiteDB Github - [https://github.com/mbdavid/LiteDB](https://github.com/mbdavid/LiteDB)
@@ -130,5 +180,3 @@ If you have found my contributions to the projects helpful, consider buying me a
 ## License
 
 [MIT](http://opensource.org/licenses/MIT)
-
-

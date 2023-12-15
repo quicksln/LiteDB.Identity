@@ -56,7 +56,7 @@ namespace LiteDB.Identity.Extensions
             builder.TryAddScoped<IUserStore<LiteDbUser>, UserStore<LiteDbUser, LiteDbRole, LiteDbUserRole, LiteDbUserClaim, LiteDbUserLogin, LiteDbUserToken>>();
             builder.TryAddScoped<IRoleStore<LiteDbRole>, RoleStore<LiteDbRole, LiteDbRoleClaim>>();
 
-            var identityBuilder = builder.AddIdentity<LiteDbUser, LiteDbRole>();
+            var identityBuilder = builder.AddIdentityCore<LiteDbUser>().AddRoles<LiteDbRole>();
 
             return identityBuilder;
         }

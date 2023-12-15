@@ -4,6 +4,7 @@ using LiteDB.Identity.Tests.Mocks;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Security.Claims;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace LiteDB.Identity.Tests.Stores
@@ -19,7 +20,7 @@ namespace LiteDB.Identity.Tests.Stores
 
 
         [Fact()]
-        public void CreateAsyncTest()
+        public async Task CreateAsyncTest()
         {
             var manager = services.GetRoleManager();
             var newRole = new LiteDbRole()
@@ -27,47 +28,47 @@ namespace LiteDB.Identity.Tests.Stores
                 Name = "TestRole"
             };
 
-            var result = manager.CreateAsync(newRole).GetAwaiter().GetResult();
-            var role = manager.FindByNameAsync(newRole.NormalizedName).GetAwaiter().GetResult();
+            var result = await manager.CreateAsync(newRole);
+            var role = await manager.FindByNameAsync(newRole.NormalizedName!);
 
             result.Should().Be(IdentityResult.Success);
             role.Should().NotBeNull();
-            role.Should().Match<LiteDbRole>(u => u.Name.Equals(role.Name));
+            role.Should().Match<LiteDbRole>(u => u.Name!.Equals(role!.Name));
         }
 
 
         [Fact()]
-        public void DeleteAsyncTest()
+        public async Task DeleteAsyncTest()
         {
             var manager = services.GetRoleManager();
-            LiteDbRole newRole = SetUpRole(manager);
+            LiteDbRole newRole = await SetUpRoleAsync(manager);
 
-            var result = manager.DeleteAsync(newRole).GetAwaiter().GetResult();
-            var role = manager.FindByNameAsync(newRole.NormalizedName).GetAwaiter().GetResult();
+            var result = await manager.DeleteAsync(newRole);
+            var role = await manager.FindByNameAsync(newRole.NormalizedName!);
                                                                    
             result.Should().Be(IdentityResult.Success);
             role.Should().BeNull();
         }
 
         [Fact()]
-        public void FindByIdAsyncTest()
+        public async Task FindByIdAsyncTest()
         {
             var manager = services.GetRoleManager();
-            LiteDbRole newRole = SetUpRole(manager);
+            LiteDbRole newRole = await SetUpRoleAsync(manager);
 
-            var role = manager.FindByIdAsync(newRole.Id.ToString()).GetAwaiter().GetResult();
+            var role = await manager.FindByIdAsync(newRole.Id.ToString());
 
             role.Should().NotBeNull();
             role.Should().Match<LiteDbRole>(u => u.Id == newRole.Id);
         }
 
         [Fact()]
-        public void FindByNameAsyncTest()
+        public async Task FindByNameAsyncTest()
         {
             var manager = services.GetRoleManager();
-            LiteDbRole newRole = SetUpRole(manager);
+            LiteDbRole newRole = await SetUpRoleAsync(manager);
 
-            var role = manager.FindByNameAsync(newRole.NormalizedName).GetAwaiter().GetResult();
+            var role = await manager.FindByNameAsync(newRole.NormalizedName!);
 
             role.Should().NotBeNull();
             role.Should().Match<LiteDbRole>(u => u.NormalizedName == newRole.NormalizedName);
@@ -75,38 +76,38 @@ namespace LiteDB.Identity.Tests.Stores
         }
 
         [Fact()]
-        public void GetRoleIdAsyncTest()
+        public async Task GetRoleIdAsyncTest()
         {
             var manager = services.GetRoleManager();
-            LiteDbRole newRole = SetUpRole(manager);
+            LiteDbRole newRole = await SetUpRoleAsync(manager);
 
-            var id = manager.GetRoleIdAsync(newRole).GetAwaiter().GetResult();
+            var id = await manager.GetRoleIdAsync(newRole);
 
             id.Should().NotBeNull();
             id.Should().Match(newRole.Id.ToString());
         }
 
         [Fact()]
-        public void GetRoleNameAsyncTest()
+        public async Task GetRoleNameAsyncTest()
         {
             var manager = services.GetRoleManager();
-            LiteDbRole newRole = SetUpRole(manager);
+            LiteDbRole newRole = await SetUpRoleAsync(manager);
 
-            var name = manager.GetRoleNameAsync(newRole).GetAwaiter().GetResult();
+            var name = await manager.GetRoleNameAsync(newRole);
 
             name.Should().NotBeNull();
             name.Should().Match(newRole.Name);
         }
 
         [Fact()]
-        public void SetRoleNameAsyncTest()
+        public async Task SetRoleNameAsyncTest()
         {
             var manager = services.GetRoleManager();
-            LiteDbRole newRole = SetUpRole(manager);
+            LiteDbRole newRole = await SetUpRoleAsync(manager);
             var newName = "NewRoleTestName";
 
-            var result = manager.SetRoleNameAsync(newRole, newName).GetAwaiter().GetResult();
-            var role = manager.FindByNameAsync(newRole.NormalizedName).GetAwaiter().GetResult();
+            var result = await manager.SetRoleNameAsync(newRole, newName);
+            var role = await manager.FindByNameAsync(newRole.NormalizedName!);
 
             result.Should().Be(IdentityResult.Success);
             role.Should().NotBeNull();
@@ -114,14 +115,14 @@ namespace LiteDB.Identity.Tests.Stores
         }
 
         [Fact()]
-        public void UpdateAsyncTest()
+        public async Task UpdateAsyncTest()
         {
             var manager = services.GetRoleManager();
-            LiteDbRole newRole = SetUpRole(manager);
+            LiteDbRole newRole = await SetUpRoleAsync(manager);
             newRole.Name = "NewRoleTestNameV2";
 
-            var result = manager.UpdateAsync(newRole).GetAwaiter().GetResult();
-            var role = manager.FindByNameAsync(newRole.NormalizedName).GetAwaiter().GetResult();
+            var result = await manager.UpdateAsync(newRole);
+            var role = await manager.FindByNameAsync(newRole.NormalizedName!);
 
             result.Should().Be(IdentityResult.Success);
             role.Should().NotBeNull();
@@ -130,14 +131,14 @@ namespace LiteDB.Identity.Tests.Stores
         }
 
         [Fact()]
-        public void AddClaimAsyncTest()
+        public async Task AddClaimAsyncTest()
         {
             var manager = services.GetRoleManager();
-            LiteDbRole role = SetUpRole(manager);
+            LiteDbRole role = await SetUpRoleAsync(manager);
             var claim = new Claim("test", "test");
 
-            var result = manager.AddClaimAsync(role, claim).GetAwaiter().GetResult();
-            var claimsForRole = manager.GetClaimsAsync(role).GetAwaiter().GetResult();
+            var result = await manager.AddClaimAsync(role, claim);
+            var claimsForRole = await manager.GetClaimsAsync(role);
 
             result.Should().Be(IdentityResult.Success);
             claimsForRole.Should().NotBeNull();
@@ -145,15 +146,15 @@ namespace LiteDB.Identity.Tests.Stores
         }
 
         [Fact()]
-        public void RemoveClaimAsyncTest()
+        public async Task RemoveClaimAsyncTest()
         {
             var manager = services.GetRoleManager();
-            LiteDbRole role = SetUpRole(manager);
+            LiteDbRole role = await SetUpRoleAsync(manager);
             var claim = new Claim("test", "test");
-            manager.AddClaimAsync(role, claim).GetAwaiter().GetResult();
+            await manager.AddClaimAsync(role, claim);
 
-            var result = manager.RemoveClaimAsync(role, claim).GetAwaiter().GetResult();
-            var claimsForRole = manager.GetClaimsAsync(role).GetAwaiter().GetResult();
+            var result = await manager.RemoveClaimAsync(role, claim);
+            var claimsForRole = await manager.GetClaimsAsync(role);
 
             result.Should().Be(IdentityResult.Success);
             claimsForRole.Should().NotBeNull();
@@ -161,53 +162,53 @@ namespace LiteDB.Identity.Tests.Stores
         }
 
         [Fact]
-        public void RoleStoreMethodsThrowWhenArgumentIsNull()
+        public async Task RoleStoreMethodsThrowWhenArgumentIsNull()
         {
             var manager = services.GetRoleManager();
 
-            manager.Invoking(m => m.CreateAsync(null)).Should().Throw<ArgumentNullException>();
-            manager.Invoking(m => m.DeleteAsync(null)).Should().Throw<ArgumentNullException>();
-            manager.Invoking(m => m.FindByIdAsync(null)).Should().Throw<ArgumentNullException>();
-            manager.Invoking(m => m.FindByNameAsync(null)).Should().Throw<ArgumentNullException>();
-            manager.Invoking(m => m.GetRoleIdAsync(null)).Should().Throw<ArgumentNullException>();
-            manager.Invoking(m => m.GetRoleNameAsync(null)).Should().Throw<ArgumentNullException>();
-            manager.Invoking(m => m.SetRoleNameAsync(null, null)).Should().Throw<ArgumentNullException>();
-            manager.Invoking(m => m.UpdateAsync(null)).Should().Throw<ArgumentNullException>();
-            manager.Invoking(m => m.AddClaimAsync(null,null)).Should().Throw<ArgumentNullException>();
-            manager.Invoking(m => m.GetClaimsAsync(null)).Should().Throw<ArgumentNullException>();
-            manager.Invoking(m => m.RemoveClaimAsync(null, null)).Should().Throw<ArgumentNullException>();
+            await manager.Invoking(m => m.CreateAsync(null!)).Should().ThrowAsync<ArgumentNullException>();
+            await manager.Invoking(m => m.DeleteAsync(null!)).Should().ThrowAsync<ArgumentNullException>();
+            await manager.Invoking(m => m.FindByIdAsync(null!)).Should().ThrowAsync<ArgumentNullException>();
+            await manager.Invoking(m => m.FindByNameAsync(null!)).Should().ThrowAsync<ArgumentNullException>();
+            await manager.Invoking(m => m.GetRoleIdAsync(null!)).Should().ThrowAsync<ArgumentNullException>();
+            await manager.Invoking(m => m.GetRoleNameAsync(null!)).Should().ThrowAsync<ArgumentNullException>();
+            await manager.Invoking(m => m.SetRoleNameAsync(null!, null)).Should().ThrowAsync<ArgumentNullException>();
+            await manager.Invoking(m => m.UpdateAsync(null!)).Should().ThrowAsync<ArgumentNullException>();
+            await manager.Invoking(m => m.AddClaimAsync(null!,null!)).Should().ThrowAsync<ArgumentNullException>();
+            await manager.Invoking(m => m.GetClaimsAsync(null!)).Should().ThrowAsync<ArgumentNullException>();
+            await manager.Invoking(m => m.RemoveClaimAsync(null!, null!)).Should().ThrowAsync<ArgumentNullException>();
         }
 
         [Fact]
-        public void RoleStoreMethodsThrowWhenDisposed()
+        public async Task RoleStoreMethodsThrowWhenDisposed()
         {
             var manager = services.GetRoleManager();
             manager.Dispose();
 
-            manager.Invoking(m => m.CreateAsync(null)).Should().Throw<ObjectDisposedException>();
-            manager.Invoking(m => m.DeleteAsync(null)).Should().Throw<ObjectDisposedException>();
-            manager.Invoking(m => m.FindByIdAsync(null)).Should().Throw<ObjectDisposedException>();
-            manager.Invoking(m => m.FindByNameAsync(null)).Should().Throw<ObjectDisposedException>();
-            manager.Invoking(m => m.GetRoleIdAsync(null)).Should().Throw<ObjectDisposedException>();
-            manager.Invoking(m => m.GetRoleNameAsync(null)).Should().Throw<ObjectDisposedException>();
-            manager.Invoking(m => m.SetRoleNameAsync(null,null)).Should().Throw<ObjectDisposedException>();
-            manager.Invoking(m => m.UpdateAsync(null)).Should().Throw<ObjectDisposedException>();
-            manager.Invoking(m => m.AddClaimAsync(null, null)).Should().Throw<ObjectDisposedException>();
-            manager.Invoking(m => m.GetClaimsAsync(null)).Should().Throw<ObjectDisposedException>();
-            manager.Invoking(m => m.RemoveClaimAsync(null, null)).Should().Throw<ObjectDisposedException>();
+            await manager.Invoking(m => m.CreateAsync(null!)).Should().ThrowAsync<ObjectDisposedException>();
+            await manager.Invoking(m => m.DeleteAsync(null!)).Should().ThrowAsync<ObjectDisposedException>();
+            await manager.Invoking(m => m.FindByIdAsync(null!)).Should().ThrowAsync<ObjectDisposedException>();
+            await manager.Invoking(m => m.FindByNameAsync(null!)).Should().ThrowAsync<ObjectDisposedException>();
+            await manager.Invoking(m => m.GetRoleIdAsync(null!)).Should().ThrowAsync<ObjectDisposedException>();
+            await manager.Invoking(m => m.GetRoleNameAsync(null!)).Should().ThrowAsync<ObjectDisposedException>();
+            await manager.Invoking(m => m.SetRoleNameAsync(null!,null)).Should().ThrowAsync<ObjectDisposedException>();
+            await manager.Invoking(m => m.UpdateAsync(null!)).Should().ThrowAsync<ObjectDisposedException>();
+            await manager.Invoking(m => m.AddClaimAsync(null!, null!)).Should().ThrowAsync<ObjectDisposedException>();
+            await manager.Invoking(m => m.GetClaimsAsync(null!)).Should().ThrowAsync<ObjectDisposedException>();
+            await manager.Invoking(m => m.RemoveClaimAsync(null!, null!)).Should().ThrowAsync<ObjectDisposedException>();
         }
 
 
         #region Private methods
 
-        private LiteDbRole SetUpRole(RoleManager<LiteDbRole> manager)
+        private async Task<LiteDbRole> SetUpRoleAsync(RoleManager<LiteDbRole> manager)
         {
             var role = new LiteDbRole()
             {
                 Name = "TestRole"
             };
 
-            manager.CreateAsync(role).GetAwaiter().GetResult();
+            await manager.CreateAsync(role);
 
             return role;
         }

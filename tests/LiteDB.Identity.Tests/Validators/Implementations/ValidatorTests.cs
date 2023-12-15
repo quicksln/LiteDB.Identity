@@ -41,7 +41,7 @@ namespace LiteDB.Identity.Tests.Validators.Implementations
         [Fact]
         public void Validator_ValidateForNullOrEmptyString_Should_Throw_Argument_Exception()
         {
-            string value = null;
+            string value = null!;
             
             Action act = () => _validator.ValidateForNullOrEmptyString(value);
             
@@ -51,7 +51,7 @@ namespace LiteDB.Identity.Tests.Validators.Implementations
         [Fact]
         public void Validator_ValidateForNullOrEmptyString_Should_Throw_Argument_Exception_With_Variable_Name()
         {
-            string value = null;
+            string value = null!;
 
             Action act = () => _validator.ValidateForNullOrEmptyString(value, nameof(value));
 
@@ -61,7 +61,7 @@ namespace LiteDB.Identity.Tests.Validators.Implementations
         [Fact]
         public void Validator_ValidateForNullOrEmptyString_Should_Throw_Argument_Exception_With_Custom_Message()
         {
-            string value = null;
+            string value = null!;
             string message = "custom message";
 
             Action act = () => _validator.ValidateForNullOrEmptyString(value, null, message);
@@ -72,7 +72,7 @@ namespace LiteDB.Identity.Tests.Validators.Implementations
         [Fact]
         public void Validator_ValidateForNull_Should_Throw_Argument_Null_Exception()
         {
-            object value = null;
+            object value = null!;
 
             Action act = () => _validator.ValidateForNull(value);
 
@@ -82,7 +82,7 @@ namespace LiteDB.Identity.Tests.Validators.Implementations
         [Fact]
         public void Validator_ValidateForNull_Should_Throw_Argument_Null_Exception_With_Variable_Name()
         {
-            object value = null;
+            object value = null!;
 
             Action act = () => _validator.ValidateForNull(value, nameof(value));
 
@@ -92,7 +92,7 @@ namespace LiteDB.Identity.Tests.Validators.Implementations
         [Fact]
         public void Validator_ValidateForNull_Should_Throw_Argument_Null_Exception_With_Custom_Message()
         {
-            string value = null;
+            string value = null!;
             string message = "custom message";
 
             Action act = () => _validator.ValidateForNull(value, null, message);

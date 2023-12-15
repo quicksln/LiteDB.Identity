@@ -3,6 +3,7 @@ using LiteDB.Identity.Models;
 using LiteDB.Identity.Tests.Mocks;
 using Microsoft.AspNetCore.Identity;
 using System;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace AspNetCore.Identity.LiteDB.Stores.Tests
@@ -16,7 +17,7 @@ namespace AspNetCore.Identity.LiteDB.Stores.Tests
         }
 
         [Fact()]
-        public void CreateAsyncTest()
+        public async Task CreateAsyncTest()
         {
             var manager = services.GetUserManager();
             LiteDbUser newUser = new LiteDbUser()
@@ -25,8 +26,8 @@ namespace AspNetCore.Identity.LiteDB.Stores.Tests
                 Email = "test@test.com",
             };
 
-            var result = manager.CreateAsync(newUser).GetAwaiter().GetResult();
-            var user = manager.FindByNameAsync(newUser.NormalizedUserName).GetAwaiter().GetResult();
+            var result = await manager.CreateAsync(newUser);
+            var user = await manager.FindByNameAsync(newUser.NormalizedUserName!);
 
             result.Should().Be(IdentityResult.Success);
             user.Should().NotBeNull();
@@ -35,75 +36,75 @@ namespace AspNetCore.Identity.LiteDB.Stores.Tests
 
 
         [Fact()]
-        public void DeleteAsyncTest()
+        public async Task DeleteAsyncTest()
         {
             var manager = services.GetUserManager();
-            LiteDbUser newUser = SetUpUser(manager);
+            LiteDbUser newUser = await SetUpUserAsync(manager);
 
-            var result = manager.DeleteAsync(newUser).GetAwaiter().GetResult();
-            var user = manager.FindByNameAsync(newUser.NormalizedUserName).GetAwaiter().GetResult();
+            var result = await manager.DeleteAsync(newUser);
+            var user = await manager.FindByNameAsync(newUser.NormalizedUserName!);
 
             result.Should().Be(IdentityResult.Success);
             user.Should().BeNull();
         }
 
         [Fact()]
-        public void FindByIdAsyncTest()
+        public async Task FindByIdAsyncTest()
         {
             var manager = services.GetUserManager();
-            LiteDbUser newUser = SetUpUser(manager);
+            LiteDbUser newUser = await SetUpUserAsync(manager);
 
-            var user = manager.FindByIdAsync(newUser.Id.ToString()).GetAwaiter().GetResult();
+            var user = await manager.FindByIdAsync(newUser.Id.ToString());
 
             user.Should().NotBeNull();
             user.Should().Match<LiteDbUser>(u => u.Id == newUser.Id);
         }
 
         [Fact()]
-        public void FindByNameAsyncTest()
+        public async Task FindByNameAsyncTest()
         {
             var manager = services.GetUserManager();
-            LiteDbUser newUser = SetUpUser(manager);
+            LiteDbUser newUser = await SetUpUserAsync(manager);
 
-            var user = manager.FindByNameAsync(newUser.NormalizedUserName).GetAwaiter().GetResult();
+            var user = await manager.FindByNameAsync(newUser.NormalizedUserName!);
 
             user.Should().NotBeNull();
             user.Should().Match<LiteDbUser>(u => u.NormalizedUserName == newUser.NormalizedUserName);
         }
 
         [Fact()]
-        public void GetUserIdAsyncTest()
+        public async Task GetUserIdAsyncTest()
         {
             var manager = services.GetUserManager();
-            LiteDbUser newUser = SetUpUser(manager);
+            LiteDbUser newUser = await SetUpUserAsync(manager);
 
-            var id = manager.GetUserIdAsync(newUser).GetAwaiter().GetResult();
+            var id = await manager.GetUserIdAsync(newUser);
 
             id.Should().NotBeNull();
             id.Should().Match(newUser.Id.ToString());
         }
 
         [Fact()]
-        public void GetUserNameAsyncTest()
+        public async Task GetUserNameAsyncTest()
         {
             var manager = services.GetUserManager();
-            LiteDbUser newUser = SetUpUser(manager);
+            LiteDbUser newUser = await SetUpUserAsync(manager);
 
-            var userName = manager.GetUserNameAsync(newUser).GetAwaiter().GetResult();
+            var userName = await manager.GetUserNameAsync(newUser);
 
             userName.Should().NotBeNull();
             userName.Should().Match(newUser.UserName);
         }
 
         [Fact()]
-        public void SetUserNameAsyncTest()
+        public async Task SetUserNameAsyncTest()
         {
             var manager = services.GetUserManager();
-            LiteDbUser newUser = SetUpUser(manager);
+            LiteDbUser newUser = await SetUpUserAsync(manager);
             var newName = "NewTestName";
 
-            var result = manager.SetUserNameAsync(newUser, newName).GetAwaiter().GetResult();
-            var user = manager.FindByNameAsync(newUser.NormalizedUserName).GetAwaiter().GetResult();
+            var result = await manager.SetUserNameAsync(newUser, newName);
+            var user = await manager.FindByNameAsync(newUser.NormalizedUserName!);
 
             result.Should().Be(IdentityResult.Success);
             user.Should().NotBeNull();
@@ -111,15 +112,15 @@ namespace AspNetCore.Identity.LiteDB.Stores.Tests
         }
 
         [Fact()]
-        public void UpdateAsyncTest()
+        public async Task UpdateAsyncTest()
         {
             var manager = services.GetUserManager();
-            LiteDbUser newUser = SetUpUser(manager);
+            LiteDbUser newUser = await SetUpUserAsync(manager);
             newUser.UserName = "NewTestNameV2";
             newUser.Email = "NewTestName@test.com";
 
-            var result = manager.UpdateAsync(newUser).GetAwaiter().GetResult();
-            var user = manager.FindByNameAsync(newUser.NormalizedUserName).GetAwaiter().GetResult();
+            var result = await manager.UpdateAsync(newUser);
+            var user = await manager.FindByNameAsync(newUser.NormalizedUserName!);
 
             result.Should().Be(IdentityResult.Success);
             user.Should().NotBeNull();
@@ -128,40 +129,39 @@ namespace AspNetCore.Identity.LiteDB.Stores.Tests
         }
 
         [Fact]
-        public void UserStoreMethodsThrowWhenArgumentIsNull()
+        public async Task UserStoreMethodsThrowWhenArgumentIsNull()
         {
             var manager = services.GetUserManager();
 
-            manager.Invoking(m => m.CreateAsync(null)).Should().Throw<ArgumentNullException>();
-            manager.Invoking(m => m.DeleteAsync(null)).Should().Throw<ArgumentNullException>();
-            manager.Invoking(m => m.FindByIdAsync(null)).Should().Throw<ArgumentNullException>();
-            manager.Invoking(m => m.FindByNameAsync(null)).Should().Throw<ArgumentNullException>();
-            manager.Invoking(m => m.GetUserIdAsync(null)).Should().Throw<ArgumentNullException>();
-            manager.Invoking(m => m.GetUserNameAsync(null)).Should().Throw<ArgumentNullException>();
-            manager.Invoking(m => m.SetUserNameAsync(null, null)).Should().Throw<ArgumentNullException>();
-            manager.Invoking(m => m.UpdateAsync(null)).Should().Throw<ArgumentNullException>();
+            await manager.Invoking(m => m.CreateAsync(null!)).Should().ThrowAsync<ArgumentNullException>();
+            await manager.Invoking(m => m.DeleteAsync(null!)).Should().ThrowAsync<ArgumentNullException>();
+            await manager.Invoking(m => m.FindByIdAsync(null!)).Should().ThrowAsync<ArgumentNullException>();
+            await manager.Invoking(m => m.FindByNameAsync(null!)).Should().ThrowAsync<ArgumentNullException>();
+            await manager.Invoking(m => m.GetUserIdAsync(null!)).Should().ThrowAsync<ArgumentNullException>();
+            await manager.Invoking(m => m.GetUserNameAsync(null!)).Should().ThrowAsync<ArgumentNullException>();
+            await manager.Invoking(m => m.SetUserNameAsync(null!, null!)).Should().ThrowAsync<ArgumentNullException>();
+            await manager.Invoking(m => m.UpdateAsync(null!)).Should().ThrowAsync<ArgumentNullException>();
         }
 
         [Fact]
-        public void UserStoreMethodsThrowWhenDisposed()
+        public async Task UserStoreMethodsThrowWhenDisposed()
         {
             var manager = services.GetUserManager();
             manager.Dispose();
 
-            manager.Invoking(m => m.CreateAsync(null)).Should().Throw<ObjectDisposedException>();
-            manager.Invoking(m => m.DeleteAsync(null)).Should().Throw<ObjectDisposedException>();
-            manager.Invoking(m => m.FindByIdAsync(null)).Should().Throw<ObjectDisposedException>();
-            manager.Invoking(m => m.FindByNameAsync(null)).Should().Throw<ObjectDisposedException>();
-            manager.Invoking(m => m.GetUserIdAsync(null)).Should().Throw<ObjectDisposedException>();
-            manager.Invoking(m => m.GetUserNameAsync(null)).Should().Throw<ObjectDisposedException>();
-            manager.Invoking(m => m.SetUserNameAsync(null,null)).Should().Throw<ObjectDisposedException>();
-            manager.Invoking(m => m.UpdateAsync(null)).Should().Throw<ObjectDisposedException>();
+            await manager.Invoking(m => m.CreateAsync(null!)).Should().ThrowAsync<ObjectDisposedException>();
+            await manager.Invoking(m => m.DeleteAsync(null!)).Should().ThrowAsync<ObjectDisposedException>();
+            await manager.Invoking(m => m.FindByIdAsync(null!)).Should().ThrowAsync<ObjectDisposedException>();
+            await manager.Invoking(m => m.FindByNameAsync(null!)).Should().ThrowAsync<ObjectDisposedException>();
+            await manager.Invoking(m => m.GetUserIdAsync(null!)).Should().ThrowAsync<ObjectDisposedException>();
+            await manager.Invoking(m => m.GetUserNameAsync(null!)).Should().ThrowAsync<ObjectDisposedException>();
+            await manager.Invoking(m => m.SetUserNameAsync(null!,null!)).Should().ThrowAsync<ObjectDisposedException>();
+            await manager.Invoking(m => m.UpdateAsync(null!)).Should().ThrowAsync<ObjectDisposedException>();
         }
-
 
         #region Private methods
 
-        private LiteDbUser SetUpUser(UserManager<LiteDbUser> manager)
+        private async Task<LiteDbUser> SetUpUserAsync(UserManager<LiteDbUser> manager)
         {
             var user = new LiteDbUser()
             {
@@ -169,7 +169,7 @@ namespace AspNetCore.Identity.LiteDB.Stores.Tests
                 Email = "test@test.com",
             };
 
-            manager.CreateAsync(user).GetAwaiter().GetResult();
+            await  manager.CreateAsync(user);
 
             return user;
         }
