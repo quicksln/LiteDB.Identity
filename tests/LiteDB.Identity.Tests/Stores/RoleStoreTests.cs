@@ -36,6 +36,25 @@ namespace LiteDB.Identity.Tests.Stores
             role.Should().Match<LiteDbRole>(u => u.Name!.Equals(role!.Name));
         }
 
+        [Fact()]
+        public async Task CreateRoleAsyncAndReturnIdTest()
+        {
+            var manager = services.GetRoleManager();
+            var newRole = new LiteDbRole()
+            {
+                Name = "TestRole"
+            };
+
+            var result = await manager.CreateAsync(newRole);
+            var role = await manager.FindByNameAsync(newRole.NormalizedName!);
+
+            newRole.Id.Should().NotBeNull();
+
+            newRole.Id.Should().BeOfType<ObjectId>();
+            newRole.Id.Should().NotBe(ObjectId.Empty);
+            Assert.Equal(newRole.Id, role!.Id);
+        }
+
 
         [Fact()]
         public async Task DeleteAsyncTest()

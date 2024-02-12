@@ -1,6 +1,8 @@
 using FluentAssertions;
+using LiteDB;
 using LiteDB.Identity.Models;
 using LiteDB.Identity.Tests.Mocks;
+using Microsoft.AspNetCore.Hosting.StaticWebAssets;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Threading.Tasks;
@@ -32,6 +34,26 @@ namespace AspNetCore.Identity.LiteDB.Stores.Tests
             result.Should().Be(IdentityResult.Success);
             user.Should().NotBeNull();
             user.Should().Match<LiteDbUser>(u => u.UserName == newUser.UserName && u.Email == newUser.Email);
+        }
+
+        [Fact()]
+        public async Task CreateUserAsyncAndReturnIdTest()
+        {
+            var manager = services.GetUserManager();
+            LiteDbUser newUser = new LiteDbUser()
+            {
+                UserName = "Test",
+                Email = "test@test.com",
+            };
+
+            var result = await manager.CreateAsync(newUser);
+            var user = await manager.FindByNameAsync(newUser.NormalizedUserName!);
+
+            newUser.Id.Should().NotBeNull();
+
+            newUser.Id.Should().BeOfType<ObjectId>();
+            newUser.Id.Should().NotBe(ObjectId.Empty);
+            Assert.Equal(newUser.Id, user!.Id);
         }
 
 
@@ -175,5 +197,23 @@ namespace AspNetCore.Identity.LiteDB.Stores.Tests
         }
 
         #endregion
+    }
+
+
+    public class LiteDbUserView : LiteDbUser
+    {
+        public string IdStr
+        {
+            get
+            {
+                return base.Id.ToString();
+            }
+            set
+            {
+                if (value != null)
+                    base.Id = new ObjectId(value);
+
+            }
+        }
     }
 }

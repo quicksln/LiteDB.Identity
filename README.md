@@ -173,6 +173,7 @@ Following interfaces has been implemented on :
 
 ### References
 - LiteDB - [https://www.litedb.org/](https://www.litedb.org/)
+- LiteDB Identity Async - [https://github.com/devinSpitz/LiteDB.Identity.Async](https://github.com/devinSpitz/LiteDB.Identity.Async)
 - LiteDB Github - [https://github.com/mbdavid/LiteDB](https://github.com/mbdavid/LiteDB)
 - AspNetCore Identity - [Introduction](https://docs.microsoft.com/en-us/aspnet/core/security/authentication/identity?view=aspnetcore-3.1&tabs=visual-studio)
 - AspNetCore Identity Github - [https://github.com/dotnet/aspnetcore/tree/master/src/Identity](https://github.com/dotnet/aspnetcore/tree/master/src/Identity)
