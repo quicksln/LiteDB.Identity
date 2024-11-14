@@ -8,11 +8,11 @@ __LiteDB.Identity__ will provide quick creation of login, registration, roles, c
 💡This isn't just a tool - it's your passport to an efficient authentication experience. 💡
 
 __Latest versions supports:__ 
-* LiteDB 5.0.17
-* .NET 8 
+* LiteDB 5.0.21
+* .NET 8 (8.0.11)
 * .NETSTANDARD 2.1
-* Microsoft.Extensions.Identity.Core   8.0.0
-* Microsoft.Extensions.Identity.Stores 8.0.0
+* Microsoft.Extensions.Identity.Core   8.0.11
+* Microsoft.Extensions.Identity.Stores 8.0.11
 ### Support
 If you have found my contributions to the projects helpful, consider __[buying me a coffee](https://www.buymeacoffee.com/quicksln)__ to fuel my efforts :)
 <br/><a href="https://www.buymeacoffee.com/quicksln" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: 41px !important;width: 174px !important;box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;" ></a>
@@ -22,21 +22,13 @@ Please install latest version of [LiteDB.Identity](https://www.nuget.org/package
 ```
 Install-Package LiteDB.Identity
 ```
-__For ASP.NET Core 8:__
+__For ASP.NET Core 8.0.11:__
+```
+Install-Package LiteDB.Identity -Version 1.0.8.1
+```
+__For ASP.NET Core 8.0.0:__
 ```
 Install-Package LiteDB.Identity -Version 1.0.8
-```
-__For ASP.NET Core 7:__
-```
-Install-Package LiteDB.Identity -Version 1.0.7
-```
-__For ASP.NET Core 6:__
-```
-Install-Package LiteDB.Identity -Version 1.0.6
-```
-__For ASP.NET Core 3.1:__
-```
-Install-Package LiteDB.Identity -Version 1.0.3
 ```
 
 Next, in your Startup.cs file add reference to namespace:
