@@ -1,7 +1,6 @@
-using Microsoft.AspNetCore.Identity;
 using LiteDB.Identity.Extensions;
 using LiteDB.Identity.Models;
-
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 

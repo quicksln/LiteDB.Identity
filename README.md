@@ -9,10 +9,10 @@ __LiteDB.Identity__ will provide quick creation of login, registration, roles, c
 
 __Latest versions supports:__ 
 * LiteDB 5.0.21
-* .NET 8 (8.0.11)
+* .NET 9 (9.0.0)
 * .NETSTANDARD 2.1
-* Microsoft.Extensions.Identity.Core   8.0.11
-* Microsoft.Extensions.Identity.Stores 8.0.11
+* Microsoft.Extensions.Identity.Core   9.0.0
+* Microsoft.Extensions.Identity.Stores 9.0.0
 ### Support
 If you have found my contributions to the projects helpful, consider __[buying me a coffee](https://www.buymeacoffee.com/quicksln)__ to fuel my efforts :)
 <br/><a href="https://www.buymeacoffee.com/quicksln" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: 41px !important;width: 174px !important;box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;" ></a>
@@ -39,7 +39,7 @@ using LiteDB.Identity.Extensions;
 
 Add default LiteDb.Identity implementation in Program.cs file:
 
-__For ASP.NET Core 8 :__
+__For ASP.NET Core 9 :__
 ```csharp
 using Microsoft.AspNetCore.Identity;
 using LiteDB.Identity.Extensions;
@@ -81,48 +81,6 @@ app.MapControllerRoute(
 app.MapRazorPages();
 
 app.Run();
-```
-
-__For ASP.NET Core 6 and 7 :__
-```csharp
-using LiteDB.Identity.Extensions;
-using Microsoft.AspNetCore.Identity;
-
-var builder = WebApplication.CreateBuilder(args);
-
-// Add Identity services to the container.
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddLiteDBIdentity(connectionString).AddDefaultTokenProviders().AddDefaultUI();
-//...
-builder.Services.AddControllersWithViews();
-
-var app = builder.Build();
-//...
-app.UseHttpsRedirection();
-app.UseStaticFiles();
-app.UseRouting();
-
-app.UseAuthentication();
-app.UseAuthorization();
-
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
-app.MapRazorPages();
-app.Run();
-```
-
-__For ASP.NET Core 3.1:__
-```csharp
-        public void ConfigureServices(IServiceCollection services)
-        {
-
-            string connectionString = Configuration.GetConnectionString("IdentityLiteDB");
-            services.AddLiteDBIdentity(connectionString).AddDefaultTokenProviders().AddDefaultUI();
-
-            services.AddControllersWithViews();
-            services.AddRazorPages();
-        }
 ```
 
 __NOTE:__ appsettings.json should contains connection string to your LiteDB file.
