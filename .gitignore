@@ -430,3 +430,6 @@ FodyWeavers.xsd
 
 .github/chatmodes/*
 features.md
+BuildSonarScaner.bat
+.sonarqube
+!coverage.xml
