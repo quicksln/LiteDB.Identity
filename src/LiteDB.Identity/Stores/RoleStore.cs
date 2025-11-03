@@ -12,7 +12,6 @@ using System.Threading.Tasks;
 namespace LiteDB.Identity.Stores
 {
     public class RoleStore<TRole, TRoleClaim> : IQueryableRoleStore<TRole>, 
-                                                IRoleStore<TRole>, 
                                                 IRoleClaimStore<TRole>, 
                                                 IDisposable
         where TRole : LiteDbRole, new()

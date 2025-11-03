@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using LiteDB.Identity.Validators.Interfaces;
 
 namespace LiteDB.Identity.Validators.Implementations
@@ -7,7 +8,7 @@ namespace LiteDB.Identity.Validators.Implementations
     {
         public void ValidateForNull<T>(T objectToValidate, string name = "", string validationMessage = "")
         {
-            if (objectToValidate == null)
+            if (EqualityComparer<T>.Default.Equals(objectToValidate, default(T)))
             {
                 if (!string.IsNullOrEmpty(validationMessage))
                 {
