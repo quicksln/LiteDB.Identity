@@ -197,23 +197,62 @@ namespace AspNetCore.Identity.LiteDB.Stores.Tests
         }
 
         #endregion
-    }
-
-
-    public class LiteDbUserView : LiteDbUser
-    {
-        public string IdStr
+        [Fact]
+        public async Task SetEmailAsyncTest()
         {
-            get
-            {
-                return base.Id.ToString();
-            }
-            set
-            {
-                if (value != null)
-                    base.Id = new ObjectId(value);
+            var manager = services.GetUserManager();
+            LiteDbUser newUser = await SetUpUserAsync(manager);
+            var newEmail = "newemail@test.com";
+            await manager.SetEmailAsync(newUser, newEmail);
+            newUser.Email.Should().Be(newEmail);
+        }
 
-            }
+        [Fact]
+        public async Task SetEmailConfirmedAsyncTest()
+        {
+            var manager = services.GetUserManager();
+            LiteDbUser newUser = await SetUpUserAsync(manager);
+            newUser.EmailConfirmed = true;
+            await manager.UpdateAsync(newUser);
+            newUser.EmailConfirmed.Should().BeTrue();
+        }
+
+        [Fact]
+        public async Task SetLockoutEnabledAsyncTest()
+        {
+            var manager = services.GetUserManager();
+            LiteDbUser newUser = await SetUpUserAsync(manager);
+            await manager.SetLockoutEnabledAsync(newUser, true);
+            newUser.LockoutEnabled.Should().BeTrue();
+        }
+
+        [Fact]
+        public async Task SetLockoutEndDateAsyncTest()
+        {
+            var manager = services.GetUserManager();
+            LiteDbUser newUser = await SetUpUserAsync(manager);
+            var lockoutEnd = DateTimeOffset.UtcNow.AddDays(1);
+            await manager.SetLockoutEndDateAsync(newUser, lockoutEnd);
+            newUser.LockoutEnd.Should().Be(lockoutEnd);
+        }
+
+        [Fact]
+        public async Task SetPhoneNumberAsyncTest()
+        {
+            var manager = services.GetUserManager();
+            LiteDbUser newUser = await SetUpUserAsync(manager);
+            var phone = "1234567890";
+            await manager.SetPhoneNumberAsync(newUser, phone);
+            newUser.PhoneNumber.Should().Be(phone);
+        }
+
+        [Fact]
+        public async Task SetTwoFactorEnabledAsyncTest()
+        {
+            var manager = services.GetUserManager();
+            LiteDbUser newUser = await SetUpUserAsync(manager);
+            await manager.SetTwoFactorEnabledAsync(newUser, true);
+            newUser.TwoFactorEnabled.Should().BeTrue();
         }
     }
 }

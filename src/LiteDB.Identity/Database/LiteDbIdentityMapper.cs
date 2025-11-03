@@ -19,11 +19,13 @@ namespace LiteDB.Identity.Database
             mapper = new BsonMapper();
 
             mapper.Entity<LiteDbRole>().Id(i => i.Id, true);
-            mapper.Entity<LiteDbRoleClaim>().Id(i => i.Id, true);
+            // LiteDbRoleClaim does not have an Id property, so do not set Id mapping
+            //mapper.Entity<LiteDbRoleClaim>().Id(i => i.Id, true);
+            mapper.Entity<LiteDbRoleClaim>();
 
             mapper.Entity<LiteDbUser>().Id(i => i.Id, true);
             mapper.Entity<LiteDbUserClaim>().Id(i => i.Id, true);
-            mapper.Entity<LiteDbUserLogin>().Id(i => i.Id, true);
+            mapper.Entity<LiteDbUserLogin>();
             mapper.Entity<LiteDbUserToken>().Id(i => i.Id, true);
 
             mapper.Entity<LiteDbUserRole>().Id(i => i.Id, true);
