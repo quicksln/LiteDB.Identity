@@ -9,10 +9,10 @@ __LiteDB.Identity__ will provide quick creation of login, registration, roles, c
 
 __Latest versions supports:__ 
 * LiteDB 5.0.21
-* .NET 10
+* .NET 11
 * .NETSTANDARD 2.1
-* Microsoft.Extensions.Identity.Core   10.0.15
-* Microsoft.Extensions.Identity.Stores 10.0.15
+* Microsoft.Extensions.Identity.Core   11.0.0
+* Microsoft.Extensions.Identity.Stores 11.0.0
 ### Support
 If you have found my contributions to the projects helpful, consider __[buying me a coffee](https://www.buymeacoffee.com/quicksln)__ to fuel my efforts :)
 <br/><a href="https://www.buymeacoffee.com/quicksln" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: 41px !important;width: 174px !important;box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;" ></a>
@@ -22,17 +22,14 @@ Please install latest version of [LiteDB.Identity](https://www.nuget.org/package
 ```
 Install-Package LiteDB.Identity
 ```
+__For ASP.NET Core 11:__
+```
+Install-Package LiteDB.Identity -Version 1.0.11
+```
+
 __For ASP.NET Core 10:__
 ```
 Install-Package LiteDB.Identity -Version 1.0.10
-```
-__For ASP.NET Core 8.0.11:__
-```
-Install-Package LiteDB.Identity -Version 1.0.8.11
-```
-__For ASP.NET Core 8.0.0:__
-```
-Install-Package LiteDB.Identity -Version 1.0.8
 ```
 
 Next, in your Startup.cs file add reference to namespace:
@@ -43,7 +40,7 @@ using LiteDB.Identity.Extensions;
 
 Add default LiteDb.Identity implementation in Program.cs file:
 
-__For ASP.NET Core 10 :__
+__For ASP.NET Core 11 :__
 ```csharp
 using Microsoft.AspNetCore.Identity;
 using LiteDB.Identity.Extensions;

@@ -8,6 +8,7 @@ namespace LiteDB.Identity.Database
     /// </summary>
     public class LiteDbIdentityMapper
     {
+        private static readonly object syncRoot = new object();
         private static BsonMapper mapper = null;
         public static BsonMapper GetMapper()
         {
@@ -16,21 +17,32 @@ namespace LiteDB.Identity.Database
                 return mapper;
             }
 
-            mapper = new BsonMapper();
+            lock (syncRoot)
+            {
+                if (mapper != null)
+                {
+                    return mapper;
+                }
 
-            mapper.Entity<LiteDbRole>().Id(i => i.Id, true);
-            // LiteDbRoleClaim does not have an Id property, so do not set Id mapping
-            //mapper.Entity<LiteDbRoleClaim>().Id(i => i.Id, true);
-            mapper.Entity<LiteDbRoleClaim>();
+                // Build and fully configure the mapper before publishing it,
+                // so concurrent callers never observe a partially configured instance.
+                var newMapper = new BsonMapper();
 
-            mapper.Entity<LiteDbUser>().Id(i => i.Id, true);
-            mapper.Entity<LiteDbUserClaim>().Id(i => i.Id, true);
-            mapper.Entity<LiteDbUserLogin>();
-            mapper.Entity<LiteDbUserToken>().Id(i => i.Id, true);
+                newMapper.Entity<LiteDbRole>().Id(i => i.Id, true);
+                // LiteDbRoleClaim does not have an Id property, so do not set Id mapping
+                //newMapper.Entity<LiteDbRoleClaim>().Id(i => i.Id, true);
+                newMapper.Entity<LiteDbRoleClaim>();
 
-            mapper.Entity<LiteDbUserRole>().Id(i => i.Id, true);
+                newMapper.Entity<LiteDbUser>().Id(i => i.Id, true);
+                newMapper.Entity<LiteDbUserClaim>().Id(i => i.Id, true);
+                newMapper.Entity<LiteDbUserLogin>();
+                newMapper.Entity<LiteDbUserToken>().Id(i => i.Id, true);
 
-            return mapper;
+                newMapper.Entity<LiteDbUserRole>().Id(i => i.Id, true);
+
+                mapper = newMapper;
+                return mapper;
+            }
         }
     }
 }
