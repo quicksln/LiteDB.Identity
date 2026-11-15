@@ -9,8 +9,10 @@ __LiteDB.Identity__ will provide quick creation of login, registration, roles, c
 
 __Latest versions supports:__ 
 * LiteDB 5.0.21
-* .NET 10 (Microsoft.Extensions.Identity.Core / Stores 10.0.15)
-* .NETSTANDARD 2.1 (Microsoft.Extensions.Identity.Core / Stores 9.0.0)
+* .NET 10
+* .NETSTANDARD 2.1
+* Microsoft.Extensions.Identity.Core   10.0.15
+* Microsoft.Extensions.Identity.Stores 10.0.15
 ### Support
 If you have found my contributions to the projects helpful, consider __[buying me a coffee](https://www.buymeacoffee.com/quicksln)__ to fuel my efforts :)
 <br/><a href="https://www.buymeacoffee.com/quicksln" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: 41px !important;width: 174px !important;box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;" ></a>
